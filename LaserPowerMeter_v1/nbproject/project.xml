@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>LaserPowerMeter_testing</name>
+            <name>LaserPowerMeter</name>
             <creation-uuid>fdce6088-3fa0-4773-aeb0-7a050f27225c</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>

@@ -438,10 +438,9 @@ void motor_enable(motor_struct* motor, int enable){
 }
 
 // run a first order digital filter on data
-int filter(gradient_data_struct* data, int new_value){
-
+long int filter(gradient_data_struct* data, long int new_value){
   // output = k*(input) + (1-k)*last_output
-  data->filtered_value = (int)((new_value*data->k1 + data->filtered_value*data->k2)/10); //
+  data->filtered_value = (new_value*data->k1 + data->filtered_value*data->k2)/1000; //
   data->current_value = new_value; // keep a copy of the current raw value
   return data->filtered_value; // return the filtered value
 }

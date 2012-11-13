@@ -47,7 +47,7 @@ Comments:  Support file for definitions and function prototypes
 
 #define ENC_MODE 7          // quadrature enc mode (4x, no index pulse reset)
 // digital first order filter constant
-#define EWMA_CONSTANT 15   // alpha =  0.0245*100 corresponds to 2 Hz filter
+#define EWMA_CONSTANT 150   // alpha =  0.0245*1000 corresponds to 2 Hz filter
 #define ONE_REV 400        // number of encoder counts per shaft revolution
 #define GEAR_RATIO 32.0/18.0// gear ratio between pinion and bull gears
 #define CTS_PER_DEG (9.525) // encoder cts per deg rotation
@@ -108,10 +108,10 @@ typedef struct {
   long int posn_old;
   long int posn_countold;
   long int posn;
-  long int velocity;
-  long int velocity_old;
-  long int accel;
-  long int ewma_alpha;
+//  long int velocity;
+//  long int velocity_old;
+//  long int accel;
+//  long int ewma_alpha;
   double cts_per_unit;  // conversion factor for convenience
 } enc_struct;
 
@@ -134,6 +134,8 @@ typedef struct{ // for stepper motor with driver
   int DIR_PIN;
   int STEP_PIN;
   int ENABLE_PIN;
+  int target_pos;
+  int current_pos;
 //  pwm_struct pwm;
 //  controller_data* PID_pos; // pointer to PID regime for position control
 //  controller_data* PID_vel; // pointer to PID regime for velocity control
@@ -150,8 +152,8 @@ typedef struct{
 } post_data;
 
 typedef struct{
-  int current_value;
-  int filtered_value;
+  long int current_value;
+  long int filtered_value;
   long int k1; // ewma constant multiplied by 1000. i.e., 0.15 -> 150, amount of input value contribution
   long int k2; // 1000-k1, amount of last output value contribution
 }gradient_data_struct;
@@ -206,7 +208,7 @@ void postUnits(post_data* data);     // print unit labels to serial out
 void initPostData(post_data* data, char* headings[], char* units[], int numCols);
 void postRowData(post_data* data);   // print a row of data to serial out
 void step(motor_struct* motor, int direction); // send a pulse to a stepper motor
-int filter(gradient_data_struct* data, int new_value);
+long int filter(gradient_data_struct* data, long int new_value);
 
 void rampInit(ramp_struct* ramp, long unsigned int startTime,
         long int startPosition, double cts_per_ms); // initiallize a ramp signal

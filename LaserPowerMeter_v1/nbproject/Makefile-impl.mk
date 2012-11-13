@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=LaserPowerMeter_testing
+PROJECTNAME=LaserPowerMeter_v1
 
 # Active Configuration
 DEFAULTCONF=default
