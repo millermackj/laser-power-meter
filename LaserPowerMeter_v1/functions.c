@@ -332,7 +332,7 @@ void motor_enable(motor_struct* motor, int enable){
   for(i = 0; i < 10; i++); // wait for pulse to be raised
 }
 
-// run a first order digital filter on data
+// run the default filter on the data
 long int filter(gradient_data_struct* data, long int new_input) {
   if (use_simple_filter) {
     // output = k*(input) + (1-k)*last_output
@@ -347,19 +347,16 @@ long int filter(gradient_data_struct* data, long int new_input) {
     // multiply each of the past inputs by their filter coefficients
     list_element* iter = data->inputs_head;
     for (i = 0; i < data->filter->filter_order + 1; i++) {
-      data->current_output += (iter->datum * data->filter->input_coeffs[i]) >> 17;
+      data->filtered_value += (iter->datum * data->filter->input_coeffs[i]) >> 17;
       iter = iter->next;
     }
 
     // multiply each of the past outputs by their filter coefficients
     iter = data->outputs_head;
     for (i = 1; i < data->filter->filter_order + 1; i++) {
-      data->current_output -= (iter->datum * data->filter->output_coeffs[i]) >> 17;
+      data->filtered_value -= (iter->datum * data->filter->output_coeffs[i]) >> 17;
       iter = iter->next;
     }
-
-
-
   }
     // point the past-outputs list head to most recent output
     data->outputs_head = data->outputs_head->prev;
@@ -367,6 +364,25 @@ long int filter(gradient_data_struct* data, long int new_input) {
   
   return data->filtered_value; // return the filtered value
 }
+// obtain derivative of filtered signal.
+// average first half of past values, then average second half
+// derivative is (ave_2-ave_1)/delta_t, where delta_t is half of time history
+int differentiate(gradient_data_struct* data){
+  int i;
+  long int sum = 0;
+  list_element* iter = data->outputs_head;
+  for(i = 0; i < TIME_HISTORY/2 - 1; i++){
+    sum -= iter->datum;
+    iter = iter->next;
+  }
+
+  for(i = TIME_HISTORY/2 - 1;i < TIME_HISTORY; i++){
+    sum += iter->datum;
+    iter = iter->next;
+  }
+  return sum * 1000/AD_PERIOD/(TIME_HISTORY/2 * TIME_HISTORY/2);
+}
+
 
 void init_filter(digital_filter* filter, int filter_order){
   filter->filter_order = filter_order;

@@ -13,9 +13,10 @@ Comments:  Support file for definitions and function prototypes
 
 
 #define PI 3.141592653589
-#define SAMP_PERIOD 2         // sample time in millisec
+#define SAMP_PERIOD 2         // main loop time in millisec
 
 #define BAUDRATE 115200     // baud rate for UART serial comm 115200 is good
+#define AD_PERIOD 4         // time between a/d samples
 
 #define WAIT i=0;while(i<15)i++;
 
@@ -48,7 +49,7 @@ Comments:  Support file for definitions and function prototypes
 // digital first order filter constant
 #define EWMA_CONSTANT 150   // alpha =  0.0245*1000 corresponds to 2 Hz filter
 
-#define TIME_HISTORY 10
+#define TIME_HISTORY 10    // number of past data points to store
 
 #define ONE_REV 400        // number of encoder counts per shaft revolution
 
@@ -145,12 +146,10 @@ typedef struct{
   int filter_order;
   long int input_coeffs[TIME_HISTORY];
   long int output_coeffs[TIME_HISTORY];
-
 }digital_filter;
 
 typedef struct {
   long int unfiltered_value;
-  long int current_output;
   long int filtered_value;
   long int k1; // ewma constant multiplied by 1000. i.e., 0.15 -> 150, amount of input value contribution
   long int k2; // 1000-k1, amount of last output value contribution
@@ -160,6 +159,8 @@ typedef struct {
   list_element* outputs_head;
   list_element* inputs_head;
   digital_filter* filter;
+  int deriv; // low-passed derivative of values in time history
+  long unsigned int integral; // integral of past values
 }gradient_data_struct;
 
 
@@ -215,9 +216,10 @@ void postRowData(post_data* data);   // print a row of data to serial out
 void run_steppers();
 void step(motor_struct* motor, int direction); // send a pulse to a stepper motor
 long int filter(gradient_data_struct* data, long int new_input);
-
 void cmdUnknown(command_struct* command); // send error over serial
 void motor_enable(motor_struct* motor, int enable); // enable or disable motor
 void init_filter(digital_filter* filter, int filter_order);
 void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
+int differentiate(gradient_data_struct* data);
+long unsigned int integrate(gradient_data_struct* data);
 #endif

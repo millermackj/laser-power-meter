@@ -24,6 +24,7 @@ functions.c, support.h
 #define POST_PERIOD 41 // ms between serial data postings
 #define STEP_PERIOD 4   // ms between stepper motor pulses
 
+
 long unsigned int run_time = 0; // 1 ms increments, resets at 49.7 days
 int sample_time = SAMP_PERIOD;
 int wait_flag = 0; // signal for end of sample time
@@ -33,9 +34,9 @@ int testing = 0; // flag to take set points from command line
 int LED_BLINK = 0; // blinker oscillates at blink_rate ms
 int LED_OFF = 0;
 int LED_ON = 1;
-int blink_period = 250;
+int blink_period = BLINK_PERIOD;
 int post_period = POST_PERIOD; // ms between each post (minus 16 for an unknown reason)
-int AD_period = 4; // ms between data collection
+int AD_period = AD_PERIOD; // ms between data collection
 int step_period = STEP_PERIOD;
 long unsigned int AD_clock = 0;
 long unsigned int blink_clock = 0; // ms blink rate
