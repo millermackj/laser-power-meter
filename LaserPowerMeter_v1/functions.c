@@ -1,14 +1,14 @@
 /*******************************************************
 Name: functions.c
-Date: 2/3/2011, updated 5/1/12
-Authors: Frank Sup, Jacob Miller-Mack and Andrew Erwin
+Date: 11/13/2012
+Author: Jacob Miller-Mack
 Comments:  Support file for functions
  *******************************************************/
 #include "p33FJ64MC202.h"   // Include p33FJ64MC202 header file
 #include "math.h"           // Include math libary
 #include "support.h"
 #include "PIC_serial.h"
-#include "PID.h"     // Include Defitions and function prototypes
+//#include "PID.h"     // Include Defitions and function prototypes
 #include <stdio.h>          // Include C standard I/O library
 #include <stdlib.h>         // include C standard library
 #include <string.h>         // for work with strings
@@ -20,7 +20,6 @@ extern int post_period;
 extern int blink_period;
 extern int step_period;
 extern motor_struct motorX, motorY;
-//extern pwm_struct pwm1, pwm2;
 extern command_struct command;
 extern int pause_all;
 extern int printHeader;
@@ -28,18 +27,13 @@ extern int sys_state;
 extern int testing;
 extern int postflag;
 char toPrint2[BUFFER_SIZE];
-extern ramp_struct testRampRot;
-extern ramp_struct testRampCab;
-extern int ramp_timer_rot;
-extern int ramp_timer_cab;
-extern int coilPWM;
 extern int post_period;
 extern int blink_period;
-extern int x_target;
-extern int y_target;
+extern int max_travel;
 extern gradient_data_struct* quadrant;
-//
-//////////////////////////////////////////////////////////
+extern int use_simple_filter; // flag to use EWMA instead of butterworth
+
+
 // Initialize of Clock Frequency
 
 //Configuration Bits for Clock Initialization Parameters
@@ -220,55 +214,6 @@ void init_ADC(void) {
     AD1CON1bits.ADON = 1; // turn on ADC module
 } // end init_ADC
 
-// initialization for PWM1
-//void init_pwm1(pwm_struct* pwm1){
-//    // set up data structure for pwm1
-//    pwm1->output = 0; // set desired output to zero
-//    pwm1->duty = 0;
-//    pwm1->offset = PWM1_OFFSET;
-//    pwm1->enable = 0; // disable pwm
-//    pwm1->DIR1_pin = PWM1_DIR1;// FWD direction pin for pwm1
-//    pwm1->DIR2_pin = PWM1_DIR2;// REV direction pin for pwm1
-//    pwm1->DIR1_state = 1; // state of FWD pin
-//    pwm1->DIR2_state = 0; // state of REV pin
-//    pwm1->LATCH = &PWM1_LATCH;
-//
-//
-////    //init TMR2
-//    OC1CON = 0x0000; // disable PWM module
-////    T2CON = 0x8000; // prescalar 1:1
-////    _T2IF = 0; // Clear Flag
-////    _T2IE = 1; // Enable Source
-////
-////    // init PWM1
-////    TMR2 = 0; // Reset timer value
-////    PR2 = PWM_PERIOD - 1; // set PWM period
-////    OC1RS = pwm1->duty; // set slave duty cycle
-////    OC1R = PWM_PERIOD - pwm1->duty; // duty cycle
-////    OC1CON = 0x0006; // activate PWM module
-//}
-
-// initialization for PWM2
-//void init_pwm2(pwm_struct* pwm2){
-//    // set up data structure for pwm1
-//    pwm2->output = 0; // set desired output to zero
-//    pwm2->duty = 0;
-//    pwm2->offset = PWM2_OFFSET;
-//    pwm2->enable = 0; // disable pwm
-//    pwm2->DIR1_pin = PWM2_DIR1;// FWD direction pin number for pwm2
-//    pwm2->DIR2_pin = PWM2_DIR2;// REV direction pin number for pwm2
-//    pwm2->DIR1_state = 1; // state of FWD pin
-//    pwm2->DIR2_state = 0; // state of REV pin
-//    pwm2->LATCH = &PWM2_LATCH;
-//
-//    OC2CON = 0x0000; // disable PWM module
-//
-////    // init PWM1
-////    OC2RS = pwm2->duty; // set slave duty cycle
-////    OC2R = PWM_PERIOD - pwm2->duty; // duty cycle
-////    OC2CON = 0x0006; // activate PWM module
-//}
-
 // initialize quadrature encoder module
 void init_encoders(enc_struct* encoder1, enc_struct* encoder2){
     /* possible index_mod e settings:
@@ -342,16 +287,6 @@ void readEncoder(enc_struct* pos_data) {
 
     // calc the difference between samples
     pos_data->posn_delta = pos_data->posn_count - pos_data->posn_countold;
-    
-    // calculate velocity with moving average
-//    pos_data->velocity = (long int)(
-//            (pos_data->velocity_old * (1.0 - pos_data->ewma_alpha))
-//            +(pos_data->ewma_alpha*(pos_data->posn_delta/(SAMP_TIME*0.001))));
-//
-//    pos_data->accel = (long int)(pos_data->velocity - pos_data->velocity_old)
-//            / (SAMP_TIME * 0.001);
-//
-//    pos_data->velocity_old = pos_data->velocity;
 
     // Detect and correct for zero crossing, will be apparent with large deltas.
     // If the difference is less than -50 (bigger than expected), then correct
@@ -369,46 +304,6 @@ void readEncoder(enc_struct* pos_data) {
     pos_data->posn_countold = pos_data->posn_count;
     pos_data->posn_old = pos_data->posn;
 
-}
-
-// update the pwm duty cycle on desired pwm output
-// takes pointer to pwm data structure
-
-//void doPWM(pwm_struct* pwm) {
-//
-//    if (pwm->output < 0) {
-//        if (pwm->output < -PWM_PERIOD)
-//            pwm->output = -PWM_PERIOD + 1; // do not exceed 100% Duty
-//        pwm->duty = pwm->enable * (-pwm->output + pwm->offset); // convert sign and change direction
-//        // set direction pins for FWD direction
-//        pwm->DIR1_state = 1;
-//        pwm->DIR2_state = 0;
-//
-//    } else {
-//        if (pwm->output > PWM_PERIOD)
-//            pwm->output = PWM_PERIOD - 1; // do not exceed 100% Duty
-//        pwm->duty = pwm->enable * (pwm->output + pwm->offset); // output duty cyle
-//        // set direction pins for REV direction
-//        pwm->DIR1_state = 0;
-//        pwm->DIR2_state = 1;
-//    }
-//          if(pwm->duty > PWM_PERIOD)
-//            pwm->duty = PWM_PERIOD;
-//    // set the direction pins
-//    // create a mask with the pwm direction pins cleared
-//    unsigned int tempLATCH = *(pwm->LATCH) & ~(pwm->DIR1_pin | pwm->DIR2_pin);
-//    // set latch based on desired direction pin states
-//    *(pwm->LATCH) = tempLATCH | pwm->DIR1_state*pwm->DIR1_pin
-//            | pwm->DIR2_state*pwm->DIR2_pin; //
-//}
-
-// generate reference signal for square wave
-long int squareRef(int magnitude, int period) {
-    static int direction = 1; // shared variable among all calls to this function
-    // swap direction every half period
-    if (run_time % (period / 2) == 0)
-        direction = -direction;
-    return (long int)magnitude*CTS_PER_DEG*direction;
 }
 
 // function to update the digital output states of the led pins
@@ -438,11 +333,91 @@ void motor_enable(motor_struct* motor, int enable){
 }
 
 // run a first order digital filter on data
-long int filter(gradient_data_struct* data, long int new_value){
-  // output = k*(input) + (1-k)*last_output
-  data->filtered_value = (new_value*data->k1 + data->filtered_value*data->k2)/1000; //
-  data->current_value = new_value; // keep a copy of the current raw value
+long int filter(gradient_data_struct* data, long int new_input) {
+  if (use_simple_filter) {
+    // output = k*(input) + (1-k)*last_output
+    data->filtered_value = (new_input * data->k1 + data->filtered_value * data->k2) / 1000; //
+    data->unfiltered_value = new_input; // keep a copy of the current raw value
+  } else {
+    // place new input in the array of past values
+    data->inputs_head = data->inputs_head->prev;
+    data->inputs_head->datum = new_input;
+    int i;
+
+    // multiply each of the past inputs by their filter coefficients
+    list_element* iter = data->inputs_head;
+    for (i = 0; i < data->filter->filter_order + 1; i++) {
+      data->current_output += (iter->datum * data->filter->input_coeffs[i]) >> 17;
+      iter = iter->next;
+    }
+
+    // multiply each of the past outputs by their filter coefficients
+    iter = data->outputs_head;
+    for (i = 1; i < data->filter->filter_order + 1; i++) {
+      data->current_output -= (iter->datum * data->filter->output_coeffs[i]) >> 17;
+      iter = iter->next;
+    }
+
+
+
+  }
+    // point the past-outputs list head to most recent output
+    data->outputs_head = data->outputs_head->prev;
+    data->outputs_head->datum = data->unfiltered_value;
+  
   return data->filtered_value; // return the filtered value
+}
+
+void init_filter(digital_filter* filter, int filter_order){
+  filter->filter_order = filter_order;
+}
+
+void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
+  int i = 0;
+  gradData->filter = filter;
+  // link up the elements of the list
+  for(i = 0; i < TIME_HISTORY - 1; i++){
+    gradData->past_inputs[i].next = &(gradData->past_inputs[i+1]);
+    gradData->past_inputs[i+1].prev = &(gradData->past_inputs[i]);
+    gradData->past_outputs[i].next = &(gradData->past_outputs[i+1]);
+    gradData->past_outputs[i+1].prev = &(gradData->past_outputs[i]);
+  }
+  // assert: i == TIME_HISTORY - 1
+  gradData->past_inputs[i].next = &(gradData->past_inputs[0]); // make circular
+  gradData->past_inputs[0].prev = &(gradData->past_inputs[i]); // make circular
+  
+  gradData->past_outputs[i].next = &(gradData->past_outputs[0]);
+  gradData->past_outputs[0].prev = &(gradData->past_outputs[i]);
+
+  // start with heads at beginnings of arrays
+  gradData->inputs_head = gradData->past_inputs;
+  gradData->outputs_head = gradData->past_outputs;
+}
+
+// check limits of motor targets and step towards targets
+void run_steppers() {
+  motor_struct* motor_pointer = &motorX;
+  int i;
+  for (i = 0; i < 2; i++) { // run once for each motor
+    // give a pulse to the stepper driver if it's time
+    if (motor_pointer->target_pos == motor_pointer->current_pos
+            || abs(motor_pointer->target_pos) > max_travel)
+      motor_enable(motor_pointer, 0); // disable motor
+    else {
+      motor_enable(motor_pointer, 1); // enable motor
+      // check we need a positive step
+      if (motor_pointer->target_pos > motor_pointer->current_pos) {
+        step(motor_pointer, 1);
+        motor_pointer->current_pos++;
+      }        // otherwise check if we need a negative step
+      else if (motor_pointer->target_pos < motor_pointer->current_pos) {
+        step(motor_pointer, 0);
+        motor_pointer->current_pos--;
+      }
+      motor_enable(motor_pointer, 0); // disable motor
+    }
+    motor_pointer = &motorY; // now do the same as above for motorY
+  }
 }
 
 /*toggle pause state and do one-time tasks to enter paused state*/
@@ -533,23 +508,6 @@ void postRowData(post_data* data){
   }
 }
 
-// initialize a ramp struct with starting time, position and velocity
-void rampInit(ramp_struct* ramp, long unsigned int startTime,
-        long int startPosition, double cts_per_ms){
-  ramp->startTime = startTime;
-  ramp->startPos = startPosition;
-  ramp->cts_per_ms = cts_per_ms;
-}
-
-// ramp signal
-long int doRamp(ramp_struct* ramp, long unsigned int time){
-  return ramp->startPos + (long int)((time - ramp->startTime)*ramp->cts_per_ms);
-}
-
-void setCoil(int pwmDuty){
-  coilPWM = pwmDuty;
-}
-
 // serial commands are all listed here
 void doCommand(command_struct* command){
   // command: p   -toggle pause state
@@ -564,7 +522,7 @@ void doCommand(command_struct* command){
 //  }
   else if(!strncmp(command->arg0, "go", 2)){
     sys_state = SYS_GO;
-    serial_bufWrite("<m>Beginning course.</m>\n", -2);
+    serial_bufWrite("<m>System go!</m>\n", -2);
   }
   else if(!strncmp(command->arg0, "reset", 5)){
     sys_state = SYS_RESET;
@@ -585,58 +543,11 @@ void doCommand(command_struct* command){
 //      motorY.pwm.enable = 0;
       serial_bufWrite("<m>Exiting test mode.</m>\n", -1);
     }
-    else if(!strncmp(command->arg1, "angle", 5)){
-      // set angular position in degrees
-      if(testing == 1){
-//        motorX.pwm.enable = 1;
-//        motorX.PID_pos->referenceSig =
-                (long int)(atoi(command->arg2)*motorX.enc.cts_per_unit);
-      }
-      else{
-        serial_bufWrite("<m>Test mode is off. Type 'test on' to enter test mode.</m>\n",-1);
-      }
-    }
-    else if(!strncmp(command->arg1, "height", 6)){
-      if(testing == 1){
-//        motorY.pwm.enable = 1;
-//        motorY.PID_pos->referenceSig =
-                (long int)(atoi(command->arg2)*motorY.enc.cts_per_unit);
-      }
-    }
     else cmdUnknown(command);
 
   }
-//  else if(!strncmp(command->arg0, "get", 3)){
-//    if(!strncmp(command->arg1, "params", 6)){
-//      snprintf(&toPrint2[0], BUFFER_SIZE,
-//              "<m>PID parameters:\nkp1: %.2f\tkd1: %.2f\tki1: %.2f\toffset1: %d"
-//              "\nkp2: %.2f\tkd2: %.2f\tki2: %.2f\toffset2: %d</m>\n",
-//              (double)motorX.PID_pos->kp, (double)motorX.PID_pos->kd,
-//              (double)motorX.PID_pos->ki, motorX.pwm.offset,
-//              (double)motorY.PID_pos->kp, (double)motorY.PID_pos->kd,
-//              (double)motorY.PID_pos->ki, motorY.pwm.offset);
-//      serial_bufWrite(toPrint2, -1);
-//    }
-//  }
     else if(!strncmp(command->arg0, "set", 3)){
-//    if(!strncmp(command->arg1, "kp1", 3)){
-//      PID_setCoeffs(motorX.PID_pos, atof(command->arg2), motorX.PID_pos->kd, motorX.PID_pos->ki);
-//    }
-//    else if(!strncmp(command->arg1, "kd1", 3)){
-//      PID_setCoeffs(motorX.PID_pos, motorX.PID_pos->kp,atof(command->arg2), motorX.PID_pos->ki);
-//    }
-//    else if(!strncmp(command->arg1, "ki1", 3)){
-//      PID_setCoeffs(motorX.PID_pos, motorX.PID_pos->kp, motorX.PID_pos->kd, atof(command->arg2));
-//    }
-//    else if(!strncmp(command->arg1, "kp2", 3)){
-//      PID_setCoeffs(motorY.PID_pos, atof(command->arg2), motorY.PID_pos->kd, motorY.PID_pos->ki);
-//    }
-//    else if(!strncmp(command->arg1, "kd2", 3)){
-//      PID_setCoeffs(motorY.PID_pos, motorY.PID_pos->kp,atof(command->arg2), motorY.PID_pos->ki);
-//    }
-//    else if(!strncmp(command->arg1, "ki2", 3)){
-//      PID_setCoeffs(motorY.PID_pos, motorY.PID_pos->kp, motorY.PID_pos->kd, atof(command->arg2));
-//    }
+
     if(!strncmp(command->arg1, "sampletime", 10)){
       // set sample period in milliseconds
       sample_time = atoi(command->arg2);
@@ -663,10 +574,10 @@ void doCommand(command_struct* command){
 
     }
     else if(!strncmp(command->arg1, "x", 1)){
-      x_target = atoi(command->arg2);
+      motorX.target_pos = atoi(command->arg2);
     }
     else if(!strncmp(command->arg1, "y", 1)){
-      y_target = atoi(command->arg2);
+      motorY.target_pos = atoi(command->arg2);
     }
     else if(!strncmp(command->arg1, "alpha", 1)){
 //      int i;
@@ -675,19 +586,7 @@ void doCommand(command_struct* command){
 //        quadrant[i].k2 = 1000-atoi(command->arg2);
 //      }
     }
-//    else if(!strncmp(command->arg1, "offset1", 7)){
-//      motorX.pwm.offset = atoi(command->arg2);
-//    }
-//    else if(!strncmp(command->arg1, "offset2", 7)){
-//      motorY.pwm.offset = atoi(command->arg2);
-//    }
-//    else if(!strncmp(command->arg1, "vcoil", 5)){
-//    // actuate voice coil
-//      setCoil(atoi(command->arg2));
-//    }
-//    else if(!strncmp(command->arg1, "ctsdeg", 6)){
-//      motorX.enc.cts_per_unit = atof(command->arg2);
-//    }
+
     else cmdUnknown(command);
   }
   else if(!strncmp(command->arg0, "stop", 4)){
@@ -707,42 +606,21 @@ void doCommand(command_struct* command){
       postflag = 1;
     }
   }
-//  else if(!strncmp(command->arg0, "rampr", 5)){
-//    if(testing || sys_state == SYS_GO){
-//    // initialize ramp assuming user input is in degrees/sec vel and ms duration
-//      rampInit(&testRampRot, run_time, motorX.enc.posn,
-//              (double)(atoi(command->arg1))*motorX.enc.cts_per_unit*.001);
-//      // set ramp timer to expire based on user input
-//      ramp_timer_rot = (long unsigned int)(atoi(command->arg2)); // duration of ramp
-//      snprintf(toPrint2,BUFFER_SIZE, "<m>Rampr\ncts/ms: %f\tduration: %d ms\t </m>\n",
-//              testRampRot.cts_per_ms, ramp_timer_rot);
-//      serial_bufWrite(toPrint2, -1);
-//    }
-//  }
-//  else if(!strncmp(command->arg0, "rampc", 5)){
-//    if(testing || sys_state == SYS_GO){
-//    // initialize ramp assuming user input is in degrees/sec vel and ms duration
-//      rampInit(&testRampCab, run_time, motorY.enc.posn,
-//              (double)(atoi(command->arg1))*motorY.enc.cts_per_unit*.001);
-//      // set ramp timer to expire based on user input
-//      ramp_timer_cab = (long unsigned int)(atoi(command->arg2)); // duration of ramp
-//      snprintf(toPrint2,BUFFER_SIZE, "<m>Rampc\ncts/ms: %f\tduration: %d ms\t </m>\n",
-//              testRampCab.cts_per_ms, ramp_timer_cab);
-//      serial_bufWrite(toPrint2, -1);
-//    }
-//
-//    else{
-//      serial_bufWrite("<m>Use: rampr [slope(deg/s)] [duration (ms)]\n"
-//              "Testing must be enabled.</m>\n", -1);
-//    }
-//  }
   else if(!strncmp(command->arg0, "xp", 2)){ // step commands
     motor_enable(&motorX, 1);
-    x_target += atoi(command->arg1);
+    motorX.target_pos += atoi(command->arg1);
   }
   else if(!strncmp(command->arg0, "xm", 2)){ // step commands
     motor_enable(&motorX, 1);
-    x_target -= atoi(command->arg1);
+    motorX.target_pos -= atoi(command->arg1);
+  }
+  else if(!strncmp(command->arg0, "yp", 2)){ // step commands
+    motor_enable(&motorY, 1);
+    motorY.target_pos += atoi(command->arg1);
+  }
+  else if(!strncmp(command->arg0, "ym", 2)){ // step commands
+    motor_enable(&motorY, 1);
+    motorY.target_pos -= atoi(command->arg1);
   }
   else{
     cmdUnknown(command);

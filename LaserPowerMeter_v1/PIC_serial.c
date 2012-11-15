@@ -74,7 +74,7 @@ void _ISRFASTER _U1RXInterrupt(void){
 // TX Interrupt transmits data to the serial port during system idle time
 void _ISRFASTER _U1TXInterrupt(void) {
   if(tx_lock == 0){  // check for interrupt lock
-    while(!TX_FULL && bytesRemaining > 0){
+    while(!TX_FULL && bytesRemaining > 0 && !wait_flag){
       TX_REG = outputBuffer[outputTail];         // grab byte from user buffer
       outputTail = (outputTail+1) % BUFFER_SIZE; // increment tail index
       bytesRemaining--; // decrement number of bytes remaining in user buffer
@@ -114,7 +114,7 @@ void serial_write(const char *buffer, int size) {
   tx_lock = 0; // unlock transmit interrupt
 }
 
-/*take a char array and copies it to output buffer to be delivered later*/
+/*take a char array and copy it to output buffer to be delivered later*/
 void serial_bufWrite(const char *buffer, int size){
   while (size && *buffer != '\0') { // copy entire string
     outputBuffer[outputHead] = *buffer; // push next char onto transmit buffer

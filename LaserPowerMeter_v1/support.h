@@ -34,7 +34,6 @@ Comments:  Support file for definitions and function prototypes
 #define BTN_PIN 1 << 4      // button pin, RA4
 //#define HALL_SENSE PORTAbits.RA4 // hall effect sensor on pin RA4
 
-
 #define SYS_RESET 0         // system states
 #define SYS_GO 1
 
@@ -48,9 +47,11 @@ Comments:  Support file for definitions and function prototypes
 #define ENC_MODE 7          // quadrature enc mode (4x, no index pulse reset)
 // digital first order filter constant
 #define EWMA_CONSTANT 150   // alpha =  0.0245*1000 corresponds to 2 Hz filter
+
+#define TIME_HISTORY 10
+
 #define ONE_REV 400        // number of encoder counts per shaft revolution
-#define GEAR_RATIO 32.0/18.0// gear ratio between pinion and bull gears
-#define CTS_PER_DEG (9.525) // encoder cts per deg rotation
+
 
 #define SPOOL_CIRC 195.5     // circumference of cable spool in mm
 #define CTS_PER_MM 3937.0
@@ -68,22 +69,9 @@ Comments:  Support file for definitions and function prototypes
 #define MOTY_STEP 1 << 12      // y axis motor step pin RB12
 #define MOTY_EN 1 << 10
 
-// both pwm1 and pwm2 can use timer2
-//#define PWM_PERIOD 10000    // 80mHz/10k = 4kHz PWM frequency
-
-//#define PWM1_LATCH LATB
-//#define PWM1_DIR1 1 << 11      // pwm1 direction1 pin RP11
-//#define PWM1_DIR2 1 << 12      // pwm1 direction2 pin RP12
-//#define PWM1_OFFSET 3300   // offset to account for friction
-//
-//#define PWM2_LATCH LATB
-//#define PWM2_DIR1 1 << 14      // pwm2 direction1 pin RB14
-//#define PWM2_DIR2 1 << 15      // pwm2 direction2 pin RB15
-//#define PWM2_OFFSET 1200   // offset to account for friction
-
 #define COLUMN_LABEL_SIZE 16 // max letters of each output column heading
 #define ROW_LENGTH 128       // number of letters in an entire row
-#define NUM_COLUMNS 7        // number of output columns
+#define NUM_COLUMNS 8        // number of output columns
 
 #define BUFFER_SIZE 512     // software serial data buffer size
 
@@ -136,10 +124,6 @@ typedef struct{ // for stepper motor with driver
   int ENABLE_PIN;
   int target_pos;
   int current_pos;
-//  pwm_struct pwm;
-//  controller_data* PID_pos; // pointer to PID regime for position control
-//  controller_data* PID_vel; // pointer to PID regime for velocity control
-//  controller_data* PID_acc; // pointer to PID regime for acceleration control
 }motor_struct;
 
 // data structure to hold a row of data to send over serial connection
@@ -151,12 +135,34 @@ typedef struct{
   int printHeader; // flag to indicate if header should be printed
 } post_data;
 
+typedef struct list_element{
+  long int datum;
+  struct list_element* next;
+  struct list_element* prev;
+}list_element;
+
 typedef struct{
-  long int current_value;
+  int filter_order;
+  long int input_coeffs[TIME_HISTORY];
+  long int output_coeffs[TIME_HISTORY];
+
+}digital_filter;
+
+typedef struct {
+  long int unfiltered_value;
+  long int current_output;
   long int filtered_value;
   long int k1; // ewma constant multiplied by 1000. i.e., 0.15 -> 150, amount of input value contribution
   long int k2; // 1000-k1, amount of last output value contribution
+  // circular buffers to hold past values
+  list_element past_outputs[TIME_HISTORY];
+  list_element past_inputs[TIME_HISTORY];
+  list_element* outputs_head;
+  list_element* inputs_head;
+  digital_filter* filter;
 }gradient_data_struct;
+
+
 
 // struct to hold the arguments of an incoming command from serial connection
 typedef struct{
@@ -195,7 +201,6 @@ void init_UART(void);                // initialize UART for serial communication
 int read_ADC(int channel); // read voltage on analog pin specified by channel
 void readEncoder(enc_struct* pos_data);// process encoder data
 void doPWM(pwm_struct* pwm);           // set pwm output
-long int squareRef(int magnitude, int period); //generate square wave ref signal
 void updateLEDs(LED_struct* LED);   // to light up leds
 void pause_toggle(int* pause_flag); // toggles pause flag
 void halt(void);                    // turn off power to motors and voice coil
@@ -207,12 +212,12 @@ void postHeadings(post_data* data);  // print column headings to serial out
 void postUnits(post_data* data);     // print unit labels to serial out
 void initPostData(post_data* data, char* headings[], char* units[], int numCols);
 void postRowData(post_data* data);   // print a row of data to serial out
+void run_steppers();
 void step(motor_struct* motor, int direction); // send a pulse to a stepper motor
-long int filter(gradient_data_struct* data, long int new_value);
+long int filter(gradient_data_struct* data, long int new_input);
 
-void rampInit(ramp_struct* ramp, long unsigned int startTime,
-        long int startPosition, double cts_per_ms); // initiallize a ramp signal
-long int doRamp(ramp_struct* ramp, long unsigned int time);
 void cmdUnknown(command_struct* command); // send error over serial
 void motor_enable(motor_struct* motor, int enable); // enable or disable motor
+void init_filter(digital_filter* filter, int filter_order);
+void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
 #endif
