@@ -380,9 +380,16 @@ int differentiate(gradient_data_struct* data){
     sum += iter->datum;
     iter = iter->next;
   }
-  return sum * 1000/AD_PERIOD/(TIME_HISTORY/2 * TIME_HISTORY/2);
+
+  data->deriv = (int)(sum * 1000/AD_PERIOD/(TIME_HISTORY/2 * TIME_HISTORY/2));
+  
+  return data->deriv;
 }
 
+// obtain the (unit time step) integral of a signal
+long unsigned int integrate(gradient_data_struct* data){
+  data->integral += data->filtered_value;
+}
 
 void init_filter(digital_filter* filter, int filter_order){
   filter->filter_order = filter_order;
