@@ -67,9 +67,10 @@ gradient_data_struct quadrant[4];
 // third order butterworth filter with cutoff freq of 0.02 * Fs
 // these values are all multiplied by 2^17
 digital_filter butter3 = {.filter_order = 3,
-                          .output_coeffs = {131072,	-376748,	361298,	-115591},
-                          .input_coeffs = {4,	11,	11,	4}
-                         };
+  .output_coeffs =
+  {131072, -376748, 361298, -115591},
+  .input_coeffs =
+  {4, 11, 11, 4}};
 
 long unsigned int step_clock = 0; // timer for stepper motor actuation
 
@@ -132,9 +133,23 @@ int main() {
 
   run_time = 0; // reset runtime clock
 
+  // populate data variables with sensor data
+  int j;
+  for (i = 0; i < TIME_HISTORY; i++) {
+    while (run_time < AD_clock); // wait for A/D sample clock to reset
+    for (j = 0; j < 5; j++) { // loop through each sensor
+      quadrant[j].past_outputs[i].datum =
+              quadrant[j].past_inputs[i].datum = (long int) read_ADC(j);
+      
+      int k; for(k = 0; k < 100; k++); // wait a little between each reading
+    }
+    AD_clock = run_time + AD_period; // reset A/D sample clock
+  }
+  
+
   // Start of main loop (1 msec sample period)
   while (1) // infinite loop
- {
+  {
     if (serial_remaining())
       serial_ping(); // write any unsent serial data
 

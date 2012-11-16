@@ -334,10 +334,15 @@ void motor_enable(motor_struct* motor, int enable){
 
 // run the default filter on the data
 long int filter(gradient_data_struct* data, long int new_input) {
+  data->unfiltered_value = new_input; // keep a copy of the current raw value
+
+  // scale and offset the value
+  new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
+
   if (use_simple_filter) {
     // output = k*(input) + (1-k)*last_output
     data->filtered_value = (new_input * data->k1 + data->filtered_value * data->k2) / 1000; //
-    data->unfiltered_value = new_input; // keep a copy of the current raw value
+    
   } else {
     // place new input in the array of past values
     data->inputs_head = data->inputs_head->prev;
@@ -388,12 +393,38 @@ int differentiate(gradient_data_struct* data){
 
 // obtain the (unit time step) integral of a signal
 long unsigned int integrate(gradient_data_struct* data){
-  data->integral += data->filtered_value;
+  return data->integral += data->filtered_value;
 }
 
 void init_filter(digital_filter* filter, int filter_order){
   filter->filter_order = filter_order;
 }
+
+// calculate average of stored past values
+int get_average(gradient_data_struct* data){
+  return data->average;
+}
+
+// calculate the scaling offsets for each data stream to read zero at cold state
+void calc_offsets(gradient_data_struct* data[]){
+  // find minimum offset
+  int min_index = 0;
+  int i;
+  for (i = 1; i < 4; i++){
+    if (data[i]->average < data[min_index]->average)
+      min_index = i;
+  }
+  // determine scaling factors
+  for(i = 0; i < 4; i ++){
+    data[i]->offset = data[min_index]->average;
+    data[i]->scaling_factor =
+            ((1<<10)*data[min_index]->average)/data[i]->average;
+  }
+
+}
+
+
+
 
 void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
   int i = 0;

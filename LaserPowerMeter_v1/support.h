@@ -158,10 +158,14 @@ typedef struct {
   list_element past_inputs[TIME_HISTORY];
   list_element* outputs_head;
   list_element* inputs_head;
-  digital_filter* filter;
+  digital_filter* filter; // the default filter to use with this data stream
+  long int scaling_factor; // scaling factor multiplied by 2^10;
+  int offset; // offset value
   int deriv; // low-passed derivative of values in time history
   long unsigned int integral; // integral of past values
+  int average; // average of past values
 }gradient_data_struct;
+
 
 
 
@@ -222,4 +226,6 @@ void init_filter(digital_filter* filter, int filter_order);
 void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
 int differentiate(gradient_data_struct* data);
 long unsigned int integrate(gradient_data_struct* data);
+int get_average(gradient_data_struct* data);
+void calc_offsets(gradient_data_struct* data[]);
 #endif
