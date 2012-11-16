@@ -42,12 +42,12 @@ Comments:  Support file for definitions and function prototypes
 #define THERM2_CHANNEL 1    // thermopile quadrant 2 (north), AN1
 #define THERM3_CHANNEL 2    // thermopile quadrant 3 (west), AN2
 #define THERM4_CHANNEL 3    // thermopile quadrant 4 (south), AN3
-#define POT_ADC_CHANNEL 4   // potentiometer pin, AN4
-#define TEMP_CHANNEL 5      // thermocouple on AN5
+#define TEMP_CHANNEL 4      // temperature sensor, AN4
+//#define TEMP_CHANNEL2 5      // thermocouple on AN5
 
 #define ENC_MODE 7          // quadrature enc mode (4x, no index pulse reset)
 // digital first order filter constant
-#define EWMA_CONSTANT 150   // alpha =  0.0245*1000 corresponds to 2 Hz filter
+#define EWMA_CONSTANT 135   // alpha =  0.0245*1000 corresponds to 2 Hz filter
 
 #define TIME_HISTORY 10    // number of past data points to store
 
@@ -72,7 +72,7 @@ Comments:  Support file for definitions and function prototypes
 
 #define COLUMN_LABEL_SIZE 16 // max letters of each output column heading
 #define ROW_LENGTH 128       // number of letters in an entire row
-#define NUM_COLUMNS 8        // number of output columns
+#define NUM_COLUMNS 13        // number of output columns
 
 #define BUFFER_SIZE 512     // software serial data buffer size
 

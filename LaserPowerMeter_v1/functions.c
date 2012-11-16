@@ -337,13 +337,14 @@ long int filter(gradient_data_struct* data, long int new_input) {
   data->unfiltered_value = new_input; // keep a copy of the current raw value
 
   // scale and offset the value
-  new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
+  //new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
 
   if (use_simple_filter) {
     // output = k*(input) + (1-k)*last_output
     data->filtered_value = (new_input * data->k1 + data->filtered_value * data->k2) / 1000; //
     
   } else {
+    data->filtered_value = 0; // start anew
     // place new input in the array of past values
     data->inputs_head = data->inputs_head->prev;
     data->inputs_head->datum = new_input;
@@ -365,7 +366,7 @@ long int filter(gradient_data_struct* data, long int new_input) {
   }
     // point the past-outputs list head to most recent output
     data->outputs_head = data->outputs_head->prev;
-    data->outputs_head->datum = data->unfiltered_value;
+    data->outputs_head->datum = data->filtered_value;
   
   return data->filtered_value; // return the filtered value
 }

@@ -42,7 +42,7 @@ long unsigned int AD_clock = 0;
 long unsigned int blink_clock = 0; // ms blink rate
 long unsigned int post_clock = 0; // next time to post serial data
 int postflag = 1; // set if we want to post row data to serial
-int use_simple_filter = 0; // set to zero for butterworth digital filter
+int use_simple_filter = 1; // set to zero for butterworth digital filter
 
 int printHeader = 1; // flag to print header next post or not
 char toprint[BUFFER_SIZE];
@@ -62,7 +62,7 @@ post_data data; // row of data for serial posting
 int max_travel = 10000;
 
 // structure array to store data from each of the thermopiles
-gradient_data_struct quadrant[4];
+gradient_data_struct quadrant[5];
 
 // third order butterworth filter with cutoff freq of 0.02 * Fs
 // these values are all multiplied by 2^17
@@ -121,11 +121,11 @@ int main() {
 
   // for posting data to serial port
   serial_begin(BAUDRATE); // initiatize serial connection at 115000 baud
-  char * headings[] = {"Time", "X-Step", "X-Enc", "QuadA", "QuadB", "QuadC",
-    "QuadD", "Temp"};
-  //"QuadA_filt", "QuadB_filt", "QuadC_filt", "QuadD_filt", "Temp_filt"};
-  char* units[] = {"seconds", "in", "in", "cts", "cts", "cts", "cts", "cts"};
-  //"cts", "cts", "cts", "cts", "cts"};
+  char * headings[] = {"Time", "X-Step", "Y-Step", "QuadA", "QuadB", "QuadC",
+    "QuadD", "Temp"
+          ,"QuadA_filt", "QuadB_filt", "QuadC_filt", "QuadD_filt", "Temp_filt"};
+  char* units[] = {"seconds", "in", "in", "cts", "cts", "cts", "cts", "cts"
+          ,"cts", "cts", "cts", "cts", "cts"};
 
   // initialize serial output format
   initPostData(&data, headings, units, NUM_COLUMNS);
@@ -228,11 +228,11 @@ int main() {
         snprintf(data.dataRow[6], 9, "%ld", quadrant[THERM4_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[7], 9, "%ld", quadrant[TEMP_CHANNEL].unfiltered_value);
 
-        //      snprintf(data.dataRow[8], 9, "%d.%d", quadrant[THERM1_CHANNEL].filtered_value/10,abs(quadrant[THERM1_CHANNEL].filtered_value%10));
-        //      snprintf(data.dataRow[9], 9, "%d.%d", quadrant[THERM2_CHANNEL].filtered_value/10,abs(quadrant[THERM2_CHANNEL].filtered_value%10));
-        //      snprintf(data.dataRow[10], 9, "%d.%d", quadrant[THERM3_CHANNEL].filtered_value/10,abs(quadrant[THERM3_CHANNEL].filtered_value%10));
-        //      snprintf(data.dataRow[11], 9, "%d.%d", quadrant[THERM4_CHANNEL].filtered_value/10,abs(quadrant[THERM4_CHANNEL].filtered_value%10));
-        //      snprintf(data.dataRow[12], 9, "%d.%d", quadrant[TEMP_CHANNEL].filtered_value/10,abs(quadrant[TEMP_CHANNEL].filtered_value%10));
+        snprintf(data.dataRow[8], 9, "%ld", quadrant[THERM1_CHANNEL].filtered_value);
+        snprintf(data.dataRow[9], 9, "%ld", quadrant[THERM2_CHANNEL].filtered_value);
+        snprintf(data.dataRow[10], 9, "%ld", quadrant[THERM3_CHANNEL].filtered_value);
+        snprintf(data.dataRow[11], 9, "%ld", quadrant[THERM4_CHANNEL].filtered_value);
+        snprintf(data.dataRow[12], 9, "%ld", quadrant[TEMP_CHANNEL].filtered_value);
 
         postRowData(&data);
         post_clock = run_time + post_period; // reset posting clock
