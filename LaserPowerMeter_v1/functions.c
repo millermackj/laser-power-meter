@@ -30,7 +30,7 @@ char toPrint2[BUFFER_SIZE];
 extern int post_period;
 extern int blink_period;
 extern int max_travel;
-extern gradient_data_struct* quadrant;
+extern gradient_data_struct quadrant[];
 extern int use_simple_filter; // flag to use EWMA instead of butterworth
 
 
@@ -333,15 +333,18 @@ void motor_enable(motor_struct* motor, int enable){
 }
 
 // run the default filter on the data
-long int filter(gradient_data_struct* data, long int new_input) {
+long int filter(gradient_data_struct* data, long int new_input, int doOffset) {
   data->unfiltered_value = new_input; // keep a copy of the current raw value
 
-  // scale and offset the value
-  //new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
+  if (doOffset) {
+    //new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
+    new_input -= data->offset;
+  }
 
   if (use_simple_filter) {
     // output = k*(input) + (1-k)*last_output
-    data->filtered_value = (new_input * data->k1 + data->filtered_value * data->k2) / 1000; //
+    data->filtered_value = (new_input * data->k1
+            + data->filtered_value * data->k2) / 1000; //
     
   } else {
     data->filtered_value = 0; // start anew
@@ -353,7 +356,7 @@ long int filter(gradient_data_struct* data, long int new_input) {
     // multiply each of the past inputs by their filter coefficients
     list_element* iter = data->inputs_head;
     for (i = 0; i < data->filter->filter_order + 1; i++) {
-      data->filtered_value += (iter->datum * data->filter->input_coeffs[i]) >> 17;
+      data->outputs_head->datum += (iter->datum * data->filter->input_coeffs[i]) >> 17;
       iter = iter->next;
     }
 
@@ -364,9 +367,8 @@ long int filter(gradient_data_struct* data, long int new_input) {
       iter = iter->next;
     }
   }
-    // point the past-outputs list head to most recent output
-    data->outputs_head = data->outputs_head->prev;
-    data->outputs_head->datum = data->filtered_value;
+  // point the past-outputs list head to most recent output
+  data->outputs_head = data->outputs_head->prev;
   
   return data->filtered_value; // return the filtered value
 }
@@ -377,17 +379,17 @@ int differentiate(gradient_data_struct* data){
   int i;
   long int sum = 0;
   list_element* iter = data->outputs_head;
-  for(i = 0; i < TIME_HISTORY/2 - 1; i++){
+  for(i = 0; i < NUM_TAPS/2 - 1; i++){
     sum -= iter->datum;
     iter = iter->next;
   }
 
-  for(i = TIME_HISTORY/2 - 1;i < TIME_HISTORY; i++){
+  for(i = NUM_TAPS/2 - 1;i < NUM_TAPS; i++){
     sum += iter->datum;
     iter = iter->next;
   }
 
-  data->deriv = (int)(sum * 1000/AD_PERIOD/(TIME_HISTORY/2 * TIME_HISTORY/2));
+  data->deriv = (int)(sum * 1000/AD_PERIOD/(NUM_TAPS/2 * NUM_TAPS/2));
   
   return data->deriv;
 }
@@ -402,36 +404,65 @@ void init_filter(digital_filter* filter, int filter_order){
 }
 
 // calculate average of stored past values
-int get_average(gradient_data_struct* data){
+long int get_average(gradient_data_struct* data){
+  int i = 0; // a counter
+  data->average = 0;
+  list_element* iter = data->inputs_head; // list iterator
+  // sum up each of the stored inputs
+  do{
+    data->average += iter->datum;
+    iter = iter->next;
+    i++; // count up each stored input
+  }while(iter != data->inputs_head);
+
+  data->average /= i; // calculate mean value of inputs
+
   return data->average;
 }
 
 // calculate the scaling offsets for each data stream to read zero at cold state
-void calc_offsets(gradient_data_struct* data[]){
-  // find minimum offset
+void calc_offsets(gradient_data_struct (*data)[]){
   int min_index = 0;
   int i;
-  for (i = 1; i < 4; i++){
-    if (data[i]->average < data[min_index]->average)
+  for (i = 1; i < 4; i++) {
+    if ((*data)[i].filtered_value < (*data)[min_index].filtered_value)
       min_index = i;
   }
-  // determine scaling factors
-  for(i = 0; i < 4; i ++){
-    data[i]->offset = data[min_index]->average;
-    data[i]->scaling_factor =
-            ((1<<10)*data[min_index]->average)/data[i]->average;
+  // determine scaling factors and offset
+  for (i = 0; i < 4; i++) {
+    (*data)[i].offset = (*data)[min_index].filtered_value;
+    (*data)[i].scaling_factor =
+            ((((*data)[min_index].filtered_value) << 10) / (*data)[i].filtered_value);
   }
+//  sprintf(toprint,"", (*data)[0].filtered_value)
+//  serial_bufWrite("offsets:\na: %ld\nb: %ld\nc: %ld\nd: %ld\n", -1);
 
+
+//  // find minimum offset
+//  int min_index = 0;
+//  get_average(&((*data)[0]));
+//
+//  int i;
+//  // calculate averages and take note of minimum
+//  for (i = 1; i < 4; i++){
+//    get_average(&((*data)[i]));
+//    if ((*data)[i].average < (*data)[min_index].average)
+//      min_index = i;
+//  }
+//  // determine scaling factors
+//  for(i = 0; i < 4; i ++){
+//    (*data)[i].offset = (*data)[min_index].average;
+//    (*data)[i].scaling_factor =
+//            ((((*data)[min_index].average)<<10)/(*data)[i].average);
+//  }
 }
-
-
 
 
 void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
   int i = 0;
   gradData->filter = filter;
   // link up the elements of the list
-  for(i = 0; i < TIME_HISTORY - 1; i++){
+  for(i = 0; i < NUM_TAPS - 1; i++){
     gradData->past_inputs[i].next = &(gradData->past_inputs[i+1]);
     gradData->past_inputs[i+1].prev = &(gradData->past_inputs[i]);
     gradData->past_outputs[i].next = &(gradData->past_outputs[i+1]);
@@ -460,7 +491,7 @@ void run_steppers() {
       motor_enable(motor_pointer, 0); // disable motor
     else {
       motor_enable(motor_pointer, 1); // enable motor
-      // check we need a positive step
+      // check if we need a positive step
       if (motor_pointer->target_pos > motor_pointer->current_pos) {
         step(motor_pointer, 1);
         motor_pointer->current_pos++;
@@ -469,7 +500,7 @@ void run_steppers() {
         step(motor_pointer, 0);
         motor_pointer->current_pos--;
       }
-      motor_enable(motor_pointer, 0); // disable motor
+     // motor_enable(motor_pointer, 0); // disable motor
     }
     motor_pointer = &motorY; // now do the same as above for motorY
   }
@@ -564,120 +595,90 @@ void postRowData(post_data* data){
 }
 
 // serial commands are all listed here
-void doCommand(command_struct* command){
+
+void doCommand(command_struct* command) {
   // command: p   -toggle pause state
-  if(!strncmp(command->arg0, "pause", 5)){ // see if arg0 is "pause"
+  if (!strncmp(command->arg0, "pause", 5)) { // see if arg0 is "pause"
     pause_toggle(&pause_all);
-  }
-//  else if(!strncmp(command->arg0, "print", 5)){
-//    if(!strncmp(command->arg1, "header", 6)){
-//      printHeader = 1;
-//    }
-//    else cmdUnknown(command);
-//  }
-  else if(!strncmp(command->arg0, "go", 2)){
+  }    //  else if(!strncmp(command->arg0, "print", 5)){
+    //    if(!strncmp(command->arg1, "header", 6)){
+    //      printHeader = 1;
+    //    }
+    //    else cmdUnknown(command);
+    //  }
+  else if (!strncmp(command->arg0, "go", 2)) {
     sys_state = SYS_GO;
     serial_bufWrite("<m>System go!</m>\n", -2);
-  }
-  else if(!strncmp(command->arg0, "reset", 5)){
+  } else if (!strncmp(command->arg0, "reset", 5)) {
     sys_state = SYS_RESET;
     serial_bufWrite("<m>Entering reset mode.</m>\n", -1);
+  }    // test mode allows the system to accept command line setpoints
+  else if (!strncmp(command->arg0, "calib", 5)) {
+   // serial_bufWrite("<m>Calibrating...", -1);
+    calc_offsets(&quadrant);
+    //serial_bufWrite("done</m>\n", -1);
   }
-  // test mode allows the system to accept command line setpoints
-  else if(!strncmp(command->arg0, "test", 4)){
-    if(!pause_all){
-      serial_bufWrite("<m>System must be paused to do testing.</m>\n", -1);
-    }
-    else if(!strncmp(command->arg1, "on", 2)){
-      testing = 1;
-      serial_bufWrite("<m>Entering test mode. Type 'test off' to exit.</m>\n", -1);
-    }
-    else if(!strncmp(command->arg1, "off", 4)){
-      testing = 0;
-//      motorX.pwm.enable = 0;
-//      motorY.pwm.enable = 0;
-      serial_bufWrite("<m>Exiting test mode.</m>\n", -1);
-    }
-    else cmdUnknown(command);
+  else if (!strncmp(command->arg0, "set", 3)) {
 
-  }
-    else if(!strncmp(command->arg0, "set", 3)){
-
-    if(!strncmp(command->arg1, "sampletime", 10)){
+    if (!strncmp(command->arg1, "sampletime", 10)) {
       // set sample period in milliseconds
       sample_time = atoi(command->arg2);
-    }
-    else if(!strncmp(command->arg1, "postrate", 8)){
+    } else if (!strncmp(command->arg1, "postrate", 8)) {
       // change data posting period in milliseconds
       post_period = atoi(command->arg2);
       serial_bufWrite("<m>Posting period set to ", -1);
       serial_bufWrite(command->arg2, -1);
       serial_bufWrite("</m>\n", -1);
-    }
-    else if(!strncmp(command->arg1, "blinkrate", 9)){
+    } else if (!strncmp(command->arg1, "blinkrate", 9)) {
       // change data posting period in milliseconds
       blink_period = atoi(command->arg2);
       serial_bufWrite("<m>Blink period set to ", -1);
       serial_bufWrite(command->arg2, -1);
       serial_bufWrite("</m>\n", -1);
-    }
-    else if(!strncmp(command->arg1, "steprate", 9)){
+    } else if (!strncmp(command->arg1, "steprate", 9)) {
       step_period = atoi(command->arg2);
       serial_bufWrite("<m>Step period set to ", -1);
       serial_bufWrite(command->arg2, -1);
       serial_bufWrite("</m>\n", -1);
 
-    }
-    else if(!strncmp(command->arg1, "x", 1)){
+    } else if (!strncmp(command->arg1, "x", 1)) {
       motorX.target_pos = atoi(command->arg2);
-    }
-    else if(!strncmp(command->arg1, "y", 1)){
+    } else if (!strncmp(command->arg1, "y", 1)) {
       motorY.target_pos = atoi(command->arg2);
+    } else if (!strncmp(command->arg1, "alpha", 1)) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        quadrant[i].k1 = atoi(command->arg2);
+        quadrant[i].k2 = 1000 - quadrant[i].k1;
+      }
     }
-    else if(!strncmp(command->arg1, "alpha", 1)){
-//      int i;
-//      for (i = 0; i < 4; i++){
-//        quadrant[i].k1 = atoi(command->arg2);
-//        quadrant[i].k2 = 1000-atoi(command->arg2);
-//      }
-    }
-
     else cmdUnknown(command);
-  }
-  else if(!strncmp(command->arg0, "stop", 4)){
-    if(!strncmp(command->arg1, "posting", 7)){
+  } else if (!strncmp(command->arg0, "stop", 4)) {
+    if (!strncmp(command->arg1, "posting", 7)) {
       postflag = 0;
       serial_bufWrite("<m>Posting stopped. Type 'start posting' to resume.</m>\n", -1);
-    }
-    else if(!strncmp(command->arg1, "motors", 4)){
+    } else if (!strncmp(command->arg1, "motors", 4)) {
       motor_enable(&motorX, 0);
       motor_enable(&motorY, 0);
-    }
-    else cmdUnknown(command);
+    } else cmdUnknown(command);
 
-  }
-  else if(!strncmp(command->arg0, "start", 5)){
-    if(!strncmp(command->arg1, "posting", 7)){
+  } else if (!strncmp(command->arg0, "start", 5)) {
+    if (!strncmp(command->arg1, "posting", 7)) {
       postflag = 1;
     }
-  }
-  else if(!strncmp(command->arg0, "xp", 2)){ // step commands
+  } else if (!strncmp(command->arg0, "xp", 2)) { // step commands
     motor_enable(&motorX, 1);
     motorX.target_pos += atoi(command->arg1);
-  }
-  else if(!strncmp(command->arg0, "xm", 2)){ // step commands
+  } else if (!strncmp(command->arg0, "xm", 2)) { // step commands
     motor_enable(&motorX, 1);
     motorX.target_pos -= atoi(command->arg1);
-  }
-  else if(!strncmp(command->arg0, "yp", 2)){ // step commands
+  } else if (!strncmp(command->arg0, "yp", 2)) { // step commands
     motor_enable(&motorY, 1);
     motorY.target_pos += atoi(command->arg1);
-  }
-  else if(!strncmp(command->arg0, "ym", 2)){ // step commands
+  } else if (!strncmp(command->arg0, "ym", 2)) { // step commands
     motor_enable(&motorY, 1);
     motorY.target_pos -= atoi(command->arg1);
-  }
-  else{
+  } else {
     cmdUnknown(command);
   }
 }

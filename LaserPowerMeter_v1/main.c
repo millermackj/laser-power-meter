@@ -22,7 +22,7 @@ functions.c, support.h
 // global variable declarations
 #define BLINK_PERIOD 250// ms between blinking of light
 #define POST_PERIOD 41 // ms between serial data postings
-#define STEP_PERIOD 4   // ms between stepper motor pulses
+#define STEP_PERIOD 2   // ms between stepper motor pulses
 
 
 long unsigned int run_time = 0; // 1 ms increments, resets at 49.7 days
@@ -47,7 +47,6 @@ int use_simple_filter = 1; // set to zero for butterworth digital filter
 int printHeader = 1; // flag to print header next post or not
 char toprint[BUFFER_SIZE];
 
-int analogData[6]; // storage for current A/D values on all channels
 int AD_channel; // index to read from a different A/D channel each loop
 
 // initialize structure holding LED pin and state info
@@ -135,7 +134,7 @@ int main() {
 
   // populate data variables with sensor data
   int j;
-  for (i = 0; i < TIME_HISTORY; i++) {
+  for (i = 0; i < NUM_TAPS; i++) {
     while (run_time < AD_clock); // wait for A/D sample clock to reset
     for (j = 0; j < 5; j++) { // loop through each sensor
       quadrant[j].past_outputs[i].datum =
@@ -146,6 +145,24 @@ int main() {
     AD_clock = run_time + AD_period; // reset A/D sample clock
   }
   
+  long unsigned int calib_clock = run_time + CALIB_TIME;
+
+// collect data for offset calibration
+  while (run_time < calib_clock) {
+    if (AD_clock <= run_time || AD_channel > 0) {
+      filter(&quadrant[AD_channel], read_ADC(AD_channel), 0); // don't use offsets
+      if (AD_channel == 5) { // reset to channel 0 after all have been through
+        AD_channel = 0;
+        AD_clock = run_time + AD_period;
+      } else {
+        AD_channel++;
+        AD_clock = run_time + 1; // wait 1 ms to sample next channel
+      }
+    }
+  }
+
+  // determine scaling offsets
+  calc_offsets(&quadrant);
 
   // Start of main loop (1 msec sample period)
   while (1) // infinite loop
@@ -155,14 +172,13 @@ int main() {
 
     // sample one of the A/D Channels this cycle
     if (AD_clock <= run_time || AD_channel > 0) {
-      //quadrant[AD_channel].current_value =read_ADC(AD_channel);
-      filter(&quadrant[AD_channel], read_ADC(AD_channel));
+      filter(&quadrant[AD_channel], read_ADC(AD_channel), 1);
       if (AD_channel == 5) { // reset to channel 0 after all have been through
         AD_channel = 0;
         AD_clock = run_time + AD_period;
       } else {
         AD_channel++;
-        AD_clock = run_time + 1; // wait 1 ms to sample next channel
+        AD_clock = run_time + 1; // wait 2 ms to sample next channel
       }
     }
 

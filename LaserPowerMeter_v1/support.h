@@ -16,7 +16,9 @@ Comments:  Support file for definitions and function prototypes
 #define SAMP_PERIOD 2         // main loop time in millisec
 
 #define BAUDRATE 115200     // baud rate for UART serial comm 115200 is good
-#define AD_PERIOD 4         // time between a/d samples
+#define AD_PERIOD 2         // time between a/d samples
+#define CALIB_TIME 2000      // time to collect calibration data
+
 
 #define WAIT i=0;while(i<15)i++;
 
@@ -38,6 +40,8 @@ Comments:  Support file for definitions and function prototypes
 #define SYS_RESET 0         // system states
 #define SYS_GO 1
 
+
+
 #define THERM1_CHANNEL 0    // thermopile quadrant 1 (east), AN0
 #define THERM2_CHANNEL 1    // thermopile quadrant 2 (north), AN1
 #define THERM3_CHANNEL 2    // thermopile quadrant 3 (west), AN2
@@ -47,12 +51,11 @@ Comments:  Support file for definitions and function prototypes
 
 #define ENC_MODE 7          // quadrature enc mode (4x, no index pulse reset)
 // digital first order filter constant
-#define EWMA_CONSTANT 135   // alpha =  0.0245*1000 corresponds to 2 Hz filter
+#define EWMA_CONSTANT 50   // alpha =  0.0245*1000 corresponds to 2 Hz filter
 
-#define TIME_HISTORY 10    // number of past data points to store
+#define NUM_TAPS 10    // number of past data points to store
 
 #define ONE_REV 400        // number of encoder counts per shaft revolution
-
 
 #define SPOOL_CIRC 195.5     // circumference of cable spool in mm
 #define CTS_PER_MM 3937.0
@@ -144,8 +147,8 @@ typedef struct list_element{
 
 typedef struct{
   int filter_order;
-  long int input_coeffs[TIME_HISTORY];
-  long int output_coeffs[TIME_HISTORY];
+  long int input_coeffs[NUM_TAPS];
+  long int output_coeffs[NUM_TAPS];
 }digital_filter;
 
 typedef struct {
@@ -154,13 +157,13 @@ typedef struct {
   long int k1; // ewma constant multiplied by 1000. i.e., 0.15 -> 150, amount of input value contribution
   long int k2; // 1000-k1, amount of last output value contribution
   // circular buffers to hold past values
-  list_element past_outputs[TIME_HISTORY];
-  list_element past_inputs[TIME_HISTORY];
+  list_element past_outputs[NUM_TAPS];
+  list_element past_inputs[NUM_TAPS];
   list_element* outputs_head;
   list_element* inputs_head;
   digital_filter* filter; // the default filter to use with this data stream
   long int scaling_factor; // scaling factor multiplied by 2^10;
-  int offset; // offset value
+  long int offset; // offset value
   int deriv; // low-passed derivative of values in time history
   long unsigned int integral; // integral of past values
   int average; // average of past values
@@ -219,13 +222,13 @@ void initPostData(post_data* data, char* headings[], char* units[], int numCols)
 void postRowData(post_data* data);   // print a row of data to serial out
 void run_steppers();
 void step(motor_struct* motor, int direction); // send a pulse to a stepper motor
-long int filter(gradient_data_struct* data, long int new_input);
+long int filter(gradient_data_struct* data, long int new_input, int doOffset);
 void cmdUnknown(command_struct* command); // send error over serial
 void motor_enable(motor_struct* motor, int enable); // enable or disable motor
 void init_filter(digital_filter* filter, int filter_order);
 void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
 int differentiate(gradient_data_struct* data);
 long unsigned int integrate(gradient_data_struct* data);
-int get_average(gradient_data_struct* data);
-void calc_offsets(gradient_data_struct* data[]);
+long int get_average(gradient_data_struct* data);
+void calc_offsets(gradient_data_struct (*data)[]);
 #endif
