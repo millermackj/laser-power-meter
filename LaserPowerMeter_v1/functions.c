@@ -340,8 +340,8 @@ long int filter(gradient_data_struct* data, long int new_input, int doOffset) {
   data->inputs_head->datum = new_input;
   
   if (doOffset) {
-    //new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
-    new_input -= data->offset;
+    new_input = ((new_input * data->scaling_factor) >> 15) - data->offset;
+    //new_input -= data->offset;
   }
 
   // move the pointer backwards in past outputs list
@@ -429,39 +429,52 @@ long int get_average(gradient_data_struct* data){
 
 // calculate the scaling offsets for each data stream to read zero at cold state
 void calc_offsets(gradient_data_struct (*data)[]){
-  int min_index = 0;
-  int i;
-  for (i = 1; i < 4; i++) {
-    if ((*data)[i].filtered_value < (*data)[min_index].filtered_value)
-      min_index = i;
-  }
-  // determine scaling factors and offset
-  for (i = 0; i < 4; i++) {
-    (*data)[i].offset = (*data)[min_index].filtered_value;
-    (*data)[i].scaling_factor =
-            ((((*data)[min_index].filtered_value) << 10) / (*data)[i].filtered_value);
-  }
-//  sprintf(toprint,"", (*data)[0].filtered_value)
-//  serial_bufWrite("offsets:\na: %ld\nb: %ld\nc: %ld\nd: %ld\n", -1);
+//  int min_index = 0;
+//  int i;
+//  for (i = 1; i < 4; i++) {
+//    if ((*data)[i].filtered_value < (*data)[min_index].filtered_value)
+//      min_index = i;
+//  }
+//  // determine scaling factors and offset
+//  for (i = 0; i < 4; i++) {
+//    (*data)[i].offset = (*data)[min_index].filtered_value;
+//    (*data)[i].scaling_factor =
+//            ((((*data)[min_index].filtered_value) << 10) / (*data)[i].filtered_value);
+//  }
+
 
 
 //  // find minimum offset
-//  int min_index = 0;
-//  get_average(&((*data)[0]));
-//
-//  int i;
-//  // calculate averages and take note of minimum
-//  for (i = 1; i < 4; i++){
-//    get_average(&((*data)[i]));
-//    if ((*data)[i].average < (*data)[min_index].average)
-//      min_index = i;
-//  }
-//  // determine scaling factors
-//  for(i = 0; i < 4; i ++){
-//    (*data)[i].offset = (*data)[min_index].average;
-//    (*data)[i].scaling_factor =
-//            ((((*data)[min_index].average)<<10)/(*data)[i].average);
-//  }
+  int min_index = 0;
+  get_average(&((*data)[0]));
+
+  int i;
+  // calculate averages and take note of minimum
+  for (i = 1; i < 4; i++){
+    get_average(&((*data)[i]));
+    if ((*data)[i].average < (*data)[min_index].average)
+      min_index = i;
+  }
+  // determine scaling factors
+  for(i = 0; i < 4; i ++){
+    double num, den, scale;
+    (*data)[i].offset = (*data)[min_index].average;
+    num = (double) (*data)[min_index].average;
+    den = (double) (*data)[i].average;
+    scale = (num / den) * powf(2,15);
+    if (fmod(scale, 1.0) >= 0.5)
+      scale += 1.0;
+    (*data)[i].scaling_factor = (long int)(scale);
+  }
+
+  sprintf(toPrint2, "<m>average/scaling:\na: %ld/%ld\nb: %ld/%ld\nc: %ld/%ld\nd: %ld/%ld</m>\n",
+          (*data)[0].average, (*data)[0].scaling_factor,
+          (*data)[1].average, (*data)[1].scaling_factor,
+          (*data)[2].average, (*data)[2].scaling_factor,
+          (*data)[3].average, (*data)[3].scaling_factor);
+
+  serial_bufWrite(toPrint2, -1);
+
 }
 
 

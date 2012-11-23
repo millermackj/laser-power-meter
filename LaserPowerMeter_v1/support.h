@@ -164,9 +164,9 @@ typedef struct {
   digital_filter* filter; // the default filter to use with this data stream
   long int scaling_factor; // scaling factor multiplied by 2^10;
   long int offset; // offset value
-  int deriv; // low-passed derivative of values in time history
+  long int deriv; // low-passed derivative of values in time history
   long unsigned int integral; // integral of past values
-  int average; // average of past values
+  long int average; // average of past values
 }gradient_data_struct;
 
 
