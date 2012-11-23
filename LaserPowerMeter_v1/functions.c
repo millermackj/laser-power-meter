@@ -382,22 +382,21 @@ long int filter(gradient_data_struct* data, long int new_input, int doOffset) {
 // obtain derivative of filtered signal.
 // average first half of past values, then average second half
 // derivative is (ave_2-ave_1)/delta_t, where delta_t is half of time history
-int differentiate(gradient_data_struct* data){
+long int differentiate(gradient_data_struct* data){
   int i;
   long int sum = 0;
   list_element* iter = data->outputs_head;
-  for(i = 0; i < NUM_TAPS/2 - 1; i++){
-    sum -= iter->datum;
-    iter = iter->next;
-  }
-
-  for(i = NUM_TAPS/2 - 1;i < NUM_TAPS; i++){
+  for(i = 0; i < NUM_TAPS/2; i++){
     sum += iter->datum;
     iter = iter->next;
   }
 
-  data->deriv = (int)(sum * 1000/AD_PERIOD/(NUM_TAPS/2 * NUM_TAPS/2));
-  
+  for(i = NUM_TAPS/2;i < NUM_TAPS; i++){
+    sum -= iter->datum;
+    iter = iter->next;
+  }
+
+  data->deriv = sum * (1000/AD_PERIOD)/(NUM_TAPS/2 * NUM_TAPS/2);
   return data->deriv;
 }
 
@@ -467,7 +466,7 @@ void calc_offsets(gradient_data_struct (*data)[]){
     (*data)[i].scaling_factor = (long int)(scale);
   }
 
-  sprintf(toPrint2, "<m>average/scaling:\na: %ld/%ld\nb: %ld/%ld\nc: %ld/%ld\nd: %ld/%ld</m>\n",
+  sprintf(toPrint2, "<m>calibrating...\naverage/scaling:\na: %ld/%ld\nb: %ld/%ld\nc: %ld/%ld\nd: %ld/%ld</m>\n",
           (*data)[0].average, (*data)[0].scaling_factor,
           (*data)[1].average, (*data)[1].scaling_factor,
           (*data)[2].average, (*data)[2].scaling_factor,
@@ -488,7 +487,7 @@ void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
     gradData->past_outputs[i].next = &(gradData->past_outputs[i+1]);
     gradData->past_outputs[i+1].prev = &(gradData->past_outputs[i]);
   }
-  // assert: i == TIME_HISTORY - 1
+  // assert: i == NUM_TAPS - 1
   gradData->past_inputs[i].next = &(gradData->past_inputs[0]); // make circular
   gradData->past_inputs[0].prev = &(gradData->past_inputs[i]); // make circular
   
@@ -634,9 +633,7 @@ void doCommand(command_struct* command) {
     serial_bufWrite("<m>Entering reset mode.</m>\n", -1);
   }    // test mode allows the system to accept command line setpoints
   else if (!strncmp(command->arg0, "calib", 5)) {
-   // serial_bufWrite("<m>Calibrating...", -1);
     calc_offsets(&quadrant);
-    //serial_bufWrite("done</m>\n", -1);
   }
   else if (!strncmp(command->arg0, "set", 3)) {
 
@@ -698,9 +695,20 @@ void doCommand(command_struct* command) {
   } else if (!strncmp(command->arg0, "ym", 2)) { // step commands
     motor_enable(&motorY, 1);
     motorY.target_pos -= atoi(command->arg1);
+  } else if (!strncmp(command->arg0, "deriv", 2)) { // get derivatives of signals
+  sprintf(toPrint2, "<m>derivatives: time = %ld\na: %ld\nb: %ld\nc: %ld\nd: %ld</m>\n",
+          run_time,
+          differentiate(&(quadrant[0])),
+          differentiate(&(quadrant[1])),
+          differentiate(&(quadrant[2])),
+          differentiate(&(quadrant[3])));
+
+  serial_bufWrite(toPrint2, -1);
+
   } else {
     cmdUnknown(command);
   }
+
 }
 
 // print error message to serial

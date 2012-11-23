@@ -16,7 +16,7 @@ Comments:  Support file for definitions and function prototypes
 #define SAMP_PERIOD 2         // main loop time in millisec
 
 #define BAUDRATE 115200     // baud rate for UART serial comm 115200 is good
-#define AD_PERIOD 2         // time between a/d samples
+#define AD_PERIOD 6         // time between a/d samples
 #define CALIB_TIME 2000      // time to collect calibration data
 
 
@@ -53,7 +53,7 @@ Comments:  Support file for definitions and function prototypes
 // digital first order filter constant
 #define EWMA_CONSTANT 50   // alpha =  0.0245*1000 corresponds to 2 Hz filter
 
-#define NUM_TAPS 10    // number of past data points to store
+#define NUM_TAPS 30    // number of past data points to store
 
 #define ONE_REV 400        // number of encoder counts per shaft revolution
 
@@ -227,7 +227,7 @@ void cmdUnknown(command_struct* command); // send error over serial
 void motor_enable(motor_struct* motor, int enable); // enable or disable motor
 void init_filter(digital_filter* filter, int filter_order);
 void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
-int differentiate(gradient_data_struct* data);
+long int differentiate(gradient_data_struct* data);
 long unsigned int integrate(gradient_data_struct* data);
 long int get_average(gradient_data_struct* data);
 void calc_offsets(gradient_data_struct (*data)[]);
