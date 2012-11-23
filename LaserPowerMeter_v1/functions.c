@@ -336,15 +336,23 @@ void motor_enable(motor_struct* motor, int enable){
 long int filter(gradient_data_struct* data, long int new_input, int doOffset) {
   data->unfiltered_value = new_input; // keep a copy of the current raw value
 
+  data->inputs_head = data->inputs_head->prev;
+  data->inputs_head->datum = new_input;
+  
   if (doOffset) {
     //new_input = ((new_input*data->scaling_factor) >> 10) - data->offset;
     new_input -= data->offset;
   }
 
+  // move the pointer backwards in past outputs list
+  data->outputs_head = data->outputs_head->prev;
+  // at the end of method, outputs_head will point to most recent value
+
+
   if (use_simple_filter) {
     // output = k*(input) + (1-k)*last_output
-    data->filtered_value = (new_input * data->k1
-            + data->filtered_value * data->k2) / 1000; //
+    data->outputs_head->datum = (new_input * data->k1
+            + data->outputs_head->next->datum * data->k2) / 1000; //
     
   } else {
     data->filtered_value = 0; // start anew
@@ -367,9 +375,8 @@ long int filter(gradient_data_struct* data, long int new_input, int doOffset) {
       iter = iter->next;
     }
   }
-  // point the past-outputs list head to most recent output
-  data->outputs_head = data->outputs_head->prev;
-  
+
+  data->filtered_value = data->outputs_head->datum;
   return data->filtered_value; // return the filtered value
 }
 // obtain derivative of filtered signal.

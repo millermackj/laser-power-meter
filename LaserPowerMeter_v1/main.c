@@ -95,7 +95,7 @@ int main() {
     quadrant[i].unfiltered_value = 0;
     quadrant[i].k1 = EWMA_CONSTANT;
     quadrant[i].k2 = 1000 - EWMA_CONSTANT;
-    init_gradientData(&quadrant[i], &butter3);
+    init_gradientData(&(quadrant[i]), &butter3);
   }
 
   // conversion factors and stepper motor driver pins

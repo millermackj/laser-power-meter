@@ -130,10 +130,10 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200              0x12e8          0x1c5c  (7260)
 .const                      0x14e8               0x258           0x384  (900)
-.text                       0x1740              0x17de          0x23cd  (9165)
-.dinit                      0x2f1e               0x140           0x1e0  (480)
+.text                       0x1740              0x1804          0x2406  (9222)
+.dinit                      0x2f44               0x140           0x1e0  (480)
 
-                     Total program memory used (bytes):         0x458d  (17805) 27%
+                     Total program memory used (bytes):         0x45c6  (17862) 27%
 
 
 Data Memory  [Origin = 0x800, Length = 0x2000]
@@ -334,52 +334,52 @@ External Symbols in Program Memory (by address):
                   0x001a80                  _step
                   0x001ad6                  _motor_enable
                   0x001b28                  _filter
-                  0x001c98                  _differentiate
-                  0x001d1c                  _integrate
-                  0x001d40                  _init_filter
-                  0x001d50                  _get_average
-                  0x001da0                  _calc_offsets
-                  0x001e46                  _init_gradientData
-                  0x001f0e                  _run_steppers
-                  0x001f98                  _pause_toggle
-                  0x001fe0                  _pollForSerial
-                  0x001ffe                  _parseInputString
-                  0x002026                  _initPostData
-                  0x00204c                  _postHeadings
-                  0x0020a8                  _postUnits
-                  0x0020fc                  _postRowData
-                  0x00214a                  _doCommand
-                  0x0023cc                  _cmdUnknown
-                  0x002402                  _main
-                  0x0028bc                  _PID_init
-                  0x00292c                  _PID_setCoeffs
-                  0x002b58                  _PID_run
-                  0x002c56                  _PID_setReference
-                  0x002cba                  _PID_clearOld
-                  0x002ce2                  _serial_begin
-                  0x002d4a                  __U1RXInterrupt
-                  0x002d9e                  __U1TXInterrupt
-                  0x002dee                  _serial_ping
-                  0x002df6                  _serialTest
-                  0x002e08                  _serial_write
-                  0x002e6a                  _serial_bufWrite
-                  0x002eac                  _serial_available
-                  0x002eb4                  _serial_remaining
-                  0x002ebc                  _serial_read
-                  0x002f16                  _serial_gotNewline
+                  0x001cbe                  _differentiate
+                  0x001d42                  _integrate
+                  0x001d66                  _init_filter
+                  0x001d76                  _get_average
+                  0x001dc6                  _calc_offsets
+                  0x001e6c                  _init_gradientData
+                  0x001f34                  _run_steppers
+                  0x001fbe                  _pause_toggle
+                  0x002006                  _pollForSerial
+                  0x002024                  _parseInputString
+                  0x00204c                  _initPostData
+                  0x002072                  _postHeadings
+                  0x0020ce                  _postUnits
+                  0x002122                  _postRowData
+                  0x002170                  _doCommand
+                  0x0023f2                  _cmdUnknown
+                  0x002428                  _main
+                  0x0028e2                  _PID_init
+                  0x002952                  _PID_setCoeffs
+                  0x002b7e                  _PID_run
+                  0x002c7c                  _PID_setReference
+                  0x002ce0                  _PID_clearOld
+                  0x002d08                  _serial_begin
+                  0x002d70                  __U1RXInterrupt
+                  0x002dc4                  __U1TXInterrupt
+                  0x002e14                  _serial_ping
+                  0x002e1c                  _serialTest
+                  0x002e2e                  _serial_write
+                  0x002e90                  _serial_bufWrite
+                  0x002ed2                  _serial_available
+                  0x002eda                  _serial_remaining
+                  0x002ee2                  _serial_read
+                  0x002f3c                  _serial_gotNewline
 
 External Symbols in Program Memory (by name):
 
-                  0x002cba                  _PID_clearOld
-                  0x0028bc                  _PID_init
-                  0x002b58                  _PID_run
-                  0x00292c                  _PID_setCoeffs
-                  0x002c56                  _PID_setReference
+                  0x002ce0                  _PID_clearOld
+                  0x0028e2                  _PID_init
+                  0x002b7e                  _PID_run
+                  0x002952                  _PID_setCoeffs
+                  0x002c7c                  _PID_setReference
                   0x000290                  __DefaultInterrupt
                   0x001786                  __T1Interrupt
                   0x0017c4                  __T2Interrupt
-                  0x002d4a                  __U1RXInterrupt
-                  0x002d9e                  __U1TXInterrupt
+                  0x002d70                  __U1RXInterrupt
+                  0x002dc4                  __U1TXInterrupt
                   0x000296                  ___addsf3
                   0x001414                  ___divdi3
                   0x000350                  ___divsf3
@@ -423,46 +423,46 @@ External Symbols in Program Memory (by name):
                   0x00067e                  __vsnprintf_cdnopuxX
                   0x0005fc                  _atoi
                   0x001850                  _btnDebounce
-                  0x001da0                  _calc_offsets
-                  0x0023cc                  _cmdUnknown
-                  0x001c98                  _differentiate
-                  0x00214a                  _doCommand
+                  0x001dc6                  _calc_offsets
+                  0x0023f2                  _cmdUnknown
+                  0x001cbe                  _differentiate
+                  0x002170                  _doCommand
                   0x0010ea                  _fflush
                   0x0009a6                  _fgetc
                   0x001b28                  _filter
-                  0x001d50                  _get_average
-                  0x002026                  _initPostData
+                  0x001d76                  _get_average
+                  0x00204c                  _initPostData
                   0x0018d6                  _init_ADC
                   0x001740                  _init_clock
                   0x0018f0                  _init_encoders
-                  0x001d40                  _init_filter
-                  0x001e46                  _init_gradientData
+                  0x001d66                  _init_filter
+                  0x001e6c                  _init_gradientData
                   0x0017e2                  _init_pins
                   0x0017cc                  _init_samptime
-                  0x001d1c                  _integrate
+                  0x001d42                  _integrate
                   0x000968                  _isalpha
                   0x00097c                  _isspace
                   0x00098c                  _isupper
-                  0x002402                  _main
+                  0x002428                  _main
                   0x001ad6                  _motor_enable
-                  0x001ffe                  _parseInputString
-                  0x001f98                  _pause_toggle
-                  0x001fe0                  _pollForSerial
-                  0x00204c                  _postHeadings
-                  0x0020fc                  _postRowData
-                  0x0020a8                  _postUnits
+                  0x002024                  _parseInputString
+                  0x001fbe                  _pause_toggle
+                  0x002006                  _pollForSerial
+                  0x002072                  _postHeadings
+                  0x002122                  _postRowData
+                  0x0020ce                  _postUnits
                   0x00199c                  _readEncoder
                   0x00197e                  _read_ADC
-                  0x001f0e                  _run_steppers
-                  0x002df6                  _serialTest
-                  0x002eac                  _serial_available
-                  0x002ce2                  _serial_begin
-                  0x002e6a                  _serial_bufWrite
-                  0x002f16                  _serial_gotNewline
-                  0x002dee                  _serial_ping
-                  0x002ebc                  _serial_read
-                  0x002eb4                  _serial_remaining
-                  0x002e08                  _serial_write
+                  0x001f34                  _run_steppers
+                  0x002e1c                  _serialTest
+                  0x002ed2                  _serial_available
+                  0x002d08                  _serial_begin
+                  0x002e90                  _serial_bufWrite
+                  0x002f3c                  _serial_gotNewline
+                  0x002e14                  _serial_ping
+                  0x002ee2                  _serial_read
+                  0x002eda                  _serial_remaining
+                  0x002e2e                  _serial_write
                   0x001a80                  _step
                   0x000644                  _strlen
                   0x000650                  _strncmp
@@ -729,15 +729,15 @@ __FUID3
  .debug_abbrev    0x0006f3        0x176 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
  .debug_abbrev    0x000869         0x30 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
 
-.debug_line       0x000000       0x193d
+.debug_line       0x000000       0x1955
  *(.debug_line)
  .debug_line      0x000000        0x3bf build/default/production/PIC_serial.o
  .debug_line      0x0003bf        0x238 build/default/production/PID.o
- .debug_line      0x0005f7        0xc05 build/default/production/functions.o
- .debug_line      0x0011fc        0x426 build/default/production/main.o
- .debug_line      0x001622        0x179 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
- .debug_line      0x00179b        0x170 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
- .debug_line      0x00190b         0x32 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
+ .debug_line      0x0005f7        0xc1d build/default/production/functions.o
+ .debug_line      0x001214        0x426 build/default/production/main.o
+ .debug_line      0x00163a        0x179 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+ .debug_line      0x0017b3        0x170 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+ .debug_line      0x001923         0x32 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
 
 .debug_frame      0x000000        0x5c2
  *(.debug_frame)
@@ -819,8 +819,8 @@ __FUID3
                   0x000024          0x4 LONG 0x290 DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000026          0x4 LONG 0x290 DEFINED (__SPI1ErrInterrupt)?ABSOLUTE (__SPI1ErrInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000028          0x4 LONG 0x290 DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00002a          0x4 LONG 0x2d4a DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00002c          0x4 LONG 0x2d9e DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00002a          0x4 LONG 0x2d70 DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00002c          0x4 LONG 0x2dc4 DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00002e          0x4 LONG 0x290 DEFINED (__ADC1Interrupt)?ABSOLUTE (__ADC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000030          0x4 LONG 0x290 DEFINED (__DMA1Interrupt)?ABSOLUTE (__DMA1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000032          0x4 LONG 0x290 DEFINED (__Interrupt15)?ABSOLUTE (__Interrupt15):ABSOLUTE (__DefaultInterrupt)
@@ -947,8 +947,8 @@ __FUID3
                   0x000124          0x4 LONG 0x290 DEFINED (__AltT3Interrupt)?ABSOLUTE (__AltT3Interrupt):DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000126          0x4 LONG 0x290 DEFINED (__AltSPI1ErrInterrupt)?ABSOLUTE (__AltSPI1ErrInterrupt):DEFINED (__SPI1ErrInterrupt)?ABSOLUTE (__SPI1ErrInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000128          0x4 LONG 0x290 DEFINED (__AltSPI1Interrupt)?ABSOLUTE (__AltSPI1Interrupt):DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00012a          0x4 LONG 0x2d4a DEFINED (__AltU1RXInterrupt)?ABSOLUTE (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00012c          0x4 LONG 0x2d9e DEFINED (__AltU1TXInterrupt)?ABSOLUTE (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00012a          0x4 LONG 0x2d70 DEFINED (__AltU1RXInterrupt)?ABSOLUTE (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00012c          0x4 LONG 0x2dc4 DEFINED (__AltU1TXInterrupt)?ABSOLUTE (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00012e          0x4 LONG 0x290 DEFINED (__AltADC1Interrupt)?ABSOLUTE (__AltADC1Interrupt):DEFINED (__ADC1Interrupt)?ABSOLUTE (__ADC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000130          0x4 LONG 0x290 DEFINED (__AltDMA1Interrupt)?ABSOLUTE (__AltDMA1Interrupt):DEFINED (__DMA1Interrupt)?ABSOLUTE (__DMA1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000132          0x4 LONG 0x290 DEFINED (__AltInterrupt15)?ABSOLUTE (__AltInterrupt15):DEFINED (__Interrupt15)?ABSOLUTE (__Interrupt15):ABSOLUTE (__DefaultInterrupt)
@@ -2092,8 +2092,8 @@ __c30_signature
  .const             0x94e8        0x198 build/default/production/functions.o
  .const             0x9680         0xc0 build/default/production/main.o
 
-.text             0x001740       0x17de
- .text            0x001740        0xcc2 build/default/production/functions.o
+.text             0x001740       0x1804
+ .text            0x001740        0xce8 build/default/production/functions.o
                   0x001740                  _init_clock
                   0x001786                  __T1Interrupt
                   0x0017c4                  __T2Interrupt
@@ -2108,42 +2108,42 @@ __c30_signature
                   0x001a80                  _step
                   0x001ad6                  _motor_enable
                   0x001b28                  _filter
-                  0x001c98                  _differentiate
-                  0x001d1c                  _integrate
-                  0x001d40                  _init_filter
-                  0x001d50                  _get_average
-                  0x001da0                  _calc_offsets
-                  0x001e46                  _init_gradientData
-                  0x001f0e                  _run_steppers
-                  0x001f98                  _pause_toggle
-                  0x001fe0                  _pollForSerial
-                  0x001ffe                  _parseInputString
-                  0x002026                  _initPostData
-                  0x00204c                  _postHeadings
-                  0x0020a8                  _postUnits
-                  0x0020fc                  _postRowData
-                  0x00214a                  _doCommand
-                  0x0023cc                  _cmdUnknown
- .text            0x002402        0x4ba build/default/production/main.o
-                  0x002402                  _main
- .text            0x0028bc        0x426 build/default/production/PID.o
-                  0x0028bc                  _PID_init
-                  0x00292c                  _PID_setCoeffs
-                  0x002b58                  _PID_run
-                  0x002c56                  _PID_setReference
-                  0x002cba                  _PID_clearOld
- .text            0x002ce2        0x23c build/default/production/PIC_serial.o
-                  0x002ce2                  _serial_begin
-                  0x002d4a                  __U1RXInterrupt
-                  0x002d9e                  __U1TXInterrupt
-                  0x002dee                  _serial_ping
-                  0x002df6                  _serialTest
-                  0x002e08                  _serial_write
-                  0x002e6a                  _serial_bufWrite
-                  0x002eac                  _serial_available
-                  0x002eb4                  _serial_remaining
-                  0x002ebc                  _serial_read
-                  0x002f16                  _serial_gotNewline
+                  0x001cbe                  _differentiate
+                  0x001d42                  _integrate
+                  0x001d66                  _init_filter
+                  0x001d76                  _get_average
+                  0x001dc6                  _calc_offsets
+                  0x001e6c                  _init_gradientData
+                  0x001f34                  _run_steppers
+                  0x001fbe                  _pause_toggle
+                  0x002006                  _pollForSerial
+                  0x002024                  _parseInputString
+                  0x00204c                  _initPostData
+                  0x002072                  _postHeadings
+                  0x0020ce                  _postUnits
+                  0x002122                  _postRowData
+                  0x002170                  _doCommand
+                  0x0023f2                  _cmdUnknown
+ .text            0x002428        0x4ba build/default/production/main.o
+                  0x002428                  _main
+ .text            0x0028e2        0x426 build/default/production/PID.o
+                  0x0028e2                  _PID_init
+                  0x002952                  _PID_setCoeffs
+                  0x002b7e                  _PID_run
+                  0x002c7c                  _PID_setReference
+                  0x002ce0                  _PID_clearOld
+ .text            0x002d08        0x23c build/default/production/PIC_serial.o
+                  0x002d08                  _serial_begin
+                  0x002d70                  __U1RXInterrupt
+                  0x002dc4                  __U1TXInterrupt
+                  0x002e14                  _serial_ping
+                  0x002e1c                  _serialTest
+                  0x002e2e                  _serial_write
+                  0x002e90                  _serial_bufWrite
+                  0x002ed2                  _serial_available
+                  0x002eda                  _serial_remaining
+                  0x002ee2                  _serial_read
+                  0x002f3c                  _serial_gotNewline
 
-.dinit            0x002f1e        0x140
- .dinit           0x002f1e        0x140 data_init
+.dinit            0x002f44        0x140
+ .dinit           0x002f44        0x140 data_init
