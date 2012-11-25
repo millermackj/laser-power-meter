@@ -17,7 +17,7 @@ Comments:  Support file for definitions and function prototypes
 
 #define BAUDRATE 115200     // baud rate for UART serial comm 115200 is good
 #define AD_PERIOD 6         // time between a/d samples
-#define CALIB_TIME 2000      // time to collect calibration data
+#define CALIB_TIME 1000      // time to collect calibration data
 
 
 #define WAIT i=0;while(i<15)i++;

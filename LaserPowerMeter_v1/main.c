@@ -161,8 +161,11 @@ int main() {
     }
   }
 
-  // determine scaling offsets
+  // determine scaling offsets for four quadrants
   calc_offsets(&quadrant);
+  quadrant[4].scaling_factor = (long int)1 << 15;
+  quadrant[4].offset = 0;
+
 
   // Start of main loop (1 msec sample period)
   while (1) // infinite loop
