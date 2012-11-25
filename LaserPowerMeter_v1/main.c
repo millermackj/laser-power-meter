@@ -151,7 +151,7 @@ int main() {
   while (run_time < calib_clock) {
     if (AD_clock <= run_time || AD_channel > 0) {
       filter(&quadrant[AD_channel], read_ADC(AD_channel), 0); // don't use offsets
-      if (AD_channel == 5) { // reset to channel 0 after all have been through
+      if (AD_channel == 4) { // reset to channel 0 after all have been through
         AD_channel = 0;
         AD_clock = run_time + AD_period;
       } else {
@@ -176,7 +176,7 @@ int main() {
     // sample one of the A/D Channels this cycle
     if (AD_clock <= run_time || AD_channel > 0) {
       filter(&quadrant[AD_channel], read_ADC(AD_channel), 1);
-      if (AD_channel == 5) { // reset to channel 0 after all have been through
+      if (AD_channel == 4) { // reset to channel 0 after all have been through
         AD_channel = 0;
         AD_clock = run_time + AD_period;
       } else {
@@ -246,7 +246,6 @@ int main() {
         snprintf(data.dataRow[5], 9, "%ld", quadrant[THERM3_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[6], 9, "%ld", quadrant[THERM4_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[7], 9, "%ld", quadrant[TEMP_CHANNEL].unfiltered_value);
-
         snprintf(data.dataRow[8], 9, "%ld", quadrant[THERM1_CHANNEL].filtered_value);
         snprintf(data.dataRow[9], 9, "%ld", quadrant[THERM2_CHANNEL].filtered_value);
         snprintf(data.dataRow[10], 9, "%ld", quadrant[THERM3_CHANNEL].filtered_value);

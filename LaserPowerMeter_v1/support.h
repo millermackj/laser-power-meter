@@ -69,8 +69,8 @@ Comments:  Support file for definitions and function prototypes
 #define MOTX_EN 1 << 13
 
 #define MOTY_LATCH LATB
-#define MOTY_DIR 1 << 11      // y axis motor direction pin RB11
-#define MOTY_STEP 1 << 12      // y axis motor step pin RB12
+#define MOTY_DIR 1 << 12      // y axis motor direction pin RB12
+#define MOTY_STEP 1 << 11      // y axis motor step pin RB11
 #define MOTY_EN 1 << 10
 
 #define COLUMN_LABEL_SIZE 16 // max letters of each output column heading
@@ -206,7 +206,7 @@ void init_pwm2(pwm_struct* pwm2);      // initialize pwm2
 
 void init_UART(void);                // initialize UART for serial communication
 
-int read_ADC(int channel); // read voltage on analog pin specified by channel
+long int read_ADC(int channel); // read voltage on analog pin specified by channel
 void readEncoder(enc_struct* pos_data);// process encoder data
 void doPWM(pwm_struct* pwm);           // set pwm output
 void updateLEDs(LED_struct* LED);   // to light up leds

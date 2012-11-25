@@ -269,13 +269,13 @@ void init_encoders(enc_struct* encoder1, enc_struct* encoder2){
 } // end init_Encoder
 
 // function to read a/d channel. returns 12-bit (0 to 4096) voltage reading.
-int read_ADC(int channel) {
+long int read_ADC(int channel) {
     int i = 0; // counter for waiting loop
     AD1CHS0 = channel; // indicate which pin is to be read
     AD1CON1bits.SAMP = 1; // begin sampling
     i++;  // twiddle our thumbs for a couple instruction cycles
     while (!AD1CON1bits.DONE); // wait for sampling to be done
-    return ADC1BUF0; // return the a/d results
+    return (long int)ADC1BUF0; // return the a/d results
 } // end read_ADC
 
 // function to get encoder data for the specified encoder
