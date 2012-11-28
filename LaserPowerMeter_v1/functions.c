@@ -426,23 +426,36 @@ long int get_average(gradient_data_struct* data){
   return data->average;
 }
 
-// calculate the scaling offsets for each data stream to read zero at cold state
+// convert integer deltas into a fixed point scaling factor
+void calc_scale(gradient_data_struct* data, long int delta_Y, long int delta_X) {
+  data->dbl_scale = (double)delta_Y / (double)delta_X;
+  double scale = data->dbl_scale * powf(2, 15);
+  if (fmod(scale, 1.0) >= 0.5)
+    scale += 1.0;
+  data->scaling_factor = (long int)(scale);
+}
+
+// convert floating point scaling factor into fixed point scaling factor
+void calc_scale(gradient_data_struct* data, double dbl_scale){
+  data->dbl_scale = dbl_scale;
+  double scale = (dbl_scale) * powf(2, 15);
+  if (fmod(scale, 1.0) >= 0.5)
+    scale += 1.0;
+  data->scaling_factor = (long int)(scale);
+}
+
 void calc_offsets(gradient_data_struct (*data)[]){
-//  int min_index = 0;
-//  int i;
-//  for (i = 1; i < 4; i++) {
-//    if ((*data)[i].filtered_value < (*data)[min_index].filtered_value)
-//      min_index = i;
-//  }
-//  // determine scaling factors and offset
-//  for (i = 0; i < 4; i++) {
-//    (*data)[i].offset = (*data)[min_index].filtered_value;
-//    (*data)[i].scaling_factor =
-//            ((((*data)[min_index].filtered_value) << 10) / (*data)[i].filtered_value);
-//  }
+  // calculate average value of the data stream
+  int i;
+  for(i = 0; i < 4; i++){
+    get_average(&((*data)[i]));
+    (*data)[i].offset = (*data)[i]->average;
+  }
+}
 
 
-
+// calculate the scaling offsets for each data stream to read zero at cold state
+void calc_cold_offsets(gradient_data_struct (*data)[]){
 //  // find minimum offset
   int min_index = 0;
   get_average(&((*data)[0]));
@@ -454,16 +467,23 @@ void calc_offsets(gradient_data_struct (*data)[]){
     if ((*data)[i].average < (*data)[min_index].average)
       min_index = i;
   }
+
+
   // determine scaling factors
   for(i = 0; i < 4; i ++){
     double num, den, scale;
+    // set offset to be the average of the lowest-reading output
     (*data)[i].offset = (*data)[min_index].average;
+
     num = (double) (*data)[min_index].average;
     den = (double) (*data)[i].average;
-    scale = (num / den) * powf(2,15);
-    if (fmod(scale, 1.0) >= 0.5)
-      scale += 1.0;
-    (*data)[i].scaling_factor = (long int)(scale);
+    // scale each quadrant down to minimum average
+    calc_scale((*data)[i], (num/den));
+
+//    scale = (num / den) * powf(2,15);
+//    if (fmod(scale, 1.0) >= 0.5)
+//      scale += 1.0;
+//    (*data)[i].scaling_factor = (long int)(scale);
   }
 
   sprintf(toPrint2, "<m>calibrating...\naverage/scaling:\na: %ld/%ld\nb: %ld/%ld\nc: %ld/%ld\nd: %ld/%ld</m>\n",
@@ -476,8 +496,14 @@ void calc_offsets(gradient_data_struct (*data)[]){
 
 }
 
+// incorporate another scaling factor based on 1kW calibration values
+void calc_1kW_scaling(gradient_data_struct (*data)[]){
 
-void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
+  data->dbl_scale = (1000.0)/(double)(data->cts_at_1kW - data->offset);
+}
+
+void init_gradientData(gradient_data_struct* gradData, digital_filter* filter,
+        long int cts_at_1Kw){
   int i = 0;
   gradData->filter = filter;
   // link up the elements of the list
@@ -487,16 +513,18 @@ void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
     gradData->past_outputs[i].next = &(gradData->past_outputs[i+1]);
     gradData->past_outputs[i+1].prev = &(gradData->past_outputs[i]);
   }
-  // assert: i == NUM_TAPS - 1
+  // assert: i == NUM_TAPS - 1; link up the heads to the tails of both lists
   gradData->past_inputs[i].next = &(gradData->past_inputs[0]); // make circular
-  gradData->past_inputs[0].prev = &(gradData->past_inputs[i]); // make circular
+  gradData->past_inputs[0].prev = &(gradData->past_inputs[i]); 
   
-  gradData->past_outputs[i].next = &(gradData->past_outputs[0]);
+  gradData->past_outputs[i].next = &(gradData->past_outputs[0]);// make circular
   gradData->past_outputs[0].prev = &(gradData->past_outputs[i]);
 
   // start with heads at beginnings of arrays
   gradData->inputs_head = gradData->past_inputs;
   gradData->outputs_head = gradData->past_outputs;
+  
+  gradData->cts_at_1kW = cts_at_1Kw;
 }
 
 // check limits of motor targets and step towards targets
@@ -633,7 +661,7 @@ void doCommand(command_struct* command) {
     serial_bufWrite("<m>Entering reset mode.</m>\n", -1);
   }    // test mode allows the system to accept command line setpoints
   else if (!strncmp(command->arg0, "calib", 5)) {
-    calc_offsets(&quadrant);
+    calc_cold_offsets(&quadrant);
   }
   else if (!strncmp(command->arg0, "set", 3)) {
 

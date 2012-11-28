@@ -161,11 +161,24 @@ int main() {
     }
   }
 
-  // determine scaling offsets for four quadrants
+  // determine scaling offsets for four quadrants. this only normalizes the
+  // readings at the cold state. power calibration is separate
+  //calc_cold_offsets(&quadrant);
   calc_offsets(&quadrant);
-  quadrant[4].scaling_factor = (long int)1 << 15;
-  quadrant[4].offset = 0;
+  
+  for(i = 0; i < 4; i++){
+    long int delta_X;;
+    if(quadrant[i]->cts_at_1kW > 0)
+      delta_X = quadrant[i]->cts_at_1kW - quadrant[i]->offset;
+    else
+      delta_X  = 1000; // for uncalibrated device
 
+    calc_scale(&(quadrant[i]), 1000, quadrant[i]->cts_at_1kW - quadrant[i]->offset);
+  }
+
+  // temperature calibration. values of RTD_XXX values are defined in support.h
+  calc_scale(&(quadrant[4]), 100, RTD_100 - RTD_0)
+  quadrant[4].offset = RTD_0;
 
   // Start of main loop (1 msec sample period)
   while (1) // infinite loop

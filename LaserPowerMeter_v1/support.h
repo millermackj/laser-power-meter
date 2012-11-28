@@ -19,6 +19,14 @@ Comments:  Support file for definitions and function prototypes
 #define AD_PERIOD 6         // time between a/d samples
 #define CALIB_TIME 1000      // time to collect calibration data
 
+#define RTD_100 2464L      // RTD raw counts at 100 degrees Celsius
+#define RTD_0   813L       // RTD raw counts at 0 degrees Celsius
+
+// set the follow to zero if the device is uncalibrated
+#define QUADA_1KW  0        // quadrant A raw counts at 1kW centered
+#define QUADB_1KW  0        // quadrant B raw counts at 1kW centered
+#define QUADC_1KW  0        // quadrant C raw counts at 1kW centered
+#define QUADD_1KW  0        // quadrant D raw counts at 1kW centered
 
 #define WAIT i=0;while(i<15)i++;
 
@@ -167,6 +175,8 @@ typedef struct {
   long int deriv; // low-passed derivative of values in time history
   long unsigned int integral; // integral of past values
   long int average; // average of past values
+  double dbl_scale; // floating pont scaling factor
+  long int cts_at_1kW; // raw counts readout at 1kW centered power
 }gradient_data_struct;
 
 
@@ -230,5 +240,8 @@ void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
 long int differentiate(gradient_data_struct* data);
 long unsigned int integrate(gradient_data_struct* data);
 long int get_average(gradient_data_struct* data);
-void calc_offsets(gradient_data_struct (*data)[]);
+void calc_cold_offsets(gradient_data_struct (*data)[]);
+void calc_1kW_scaling(gradient_data_struct (*data)[]);
+void calc_scale(gradient_data_struct* data, long int delta_Y, long int delta_X);
+void calc_scale(gradient_data_struct* data, double dbl_scale);
 #endif
