@@ -14,6 +14,7 @@ Comments:  Support file for functions
 #include <string.h>         // for work with strings
 
 extern long unsigned int run_time;  // run time in milliseconds
+extern int use_mm_pos;
 extern int wait_flag;     // signals end of sample period
 extern int sample_time;
 extern int post_period;
@@ -32,7 +33,8 @@ extern int blink_period;
 extern int max_travel;
 extern gradient_data_struct quadrant[];
 extern int use_simple_filter; // flag to use EWMA instead of butterworth
-
+extern int inch_to_mm_scale;
+extern int mm_to_inch_scale;
 
 // Initialize of Clock Frequency
 
@@ -340,14 +342,13 @@ long int filter(gradient_data_struct* data, long int new_input, int doOffset) {
   data->inputs_head->datum = new_input;
   
   if (doOffset) {
-    new_input = ((new_input * data->scaling_factor) >> 15) - data->offset;
+    new_input = (((new_input- data->offset) * data->scaling_factor) >> 15) ;
     //new_input -= data->offset;
   }
 
   // move the pointer backwards in past outputs list
   data->outputs_head = data->outputs_head->prev;
   // at the end of method, outputs_head will point to most recent value
-
 
   if (use_simple_filter) {
     // output = k*(input) + (1-k)*last_output
@@ -436,7 +437,7 @@ void calc_scale(gradient_data_struct* data, long int delta_Y, long int delta_X) 
 }
 
 // convert floating point scaling factor into fixed point scaling factor
-void calc_scale(gradient_data_struct* data, double dbl_scale){
+void calc_scale_dbl(gradient_data_struct* data, double dbl_scale){
   data->dbl_scale = dbl_scale;
   double scale = (dbl_scale) * powf(2, 15);
   if (fmod(scale, 1.0) >= 0.5)
@@ -449,7 +450,7 @@ void calc_offsets(gradient_data_struct (*data)[]){
   int i;
   for(i = 0; i < 4; i++){
     get_average(&((*data)[i]));
-    (*data)[i].offset = (*data)[i]->average;
+    (*data)[i].offset = (*data)[i].average;
   }
 }
 
@@ -468,17 +469,15 @@ void calc_cold_offsets(gradient_data_struct (*data)[]){
       min_index = i;
   }
 
-
   // determine scaling factors
   for(i = 0; i < 4; i ++){
-    double num, den, scale;
+    double num, den;
     // set offset to be the average of the lowest-reading output
     (*data)[i].offset = (*data)[min_index].average;
-
     num = (double) (*data)[min_index].average;
     den = (double) (*data)[i].average;
     // scale each quadrant down to minimum average
-    calc_scale((*data)[i], (num/den));
+    calc_scale_dbl(&((*data)[i]), (num/den));
 
 //    scale = (num / den) * powf(2,15);
 //    if (fmod(scale, 1.0) >= 0.5)
@@ -497,13 +496,12 @@ void calc_cold_offsets(gradient_data_struct (*data)[]){
 }
 
 // incorporate another scaling factor based on 1kW calibration values
-void calc_1kW_scaling(gradient_data_struct (*data)[]){
+void calc_1kW_scaling(gradient_data_struct *data){
 
   data->dbl_scale = (1000.0)/(double)(data->cts_at_1kW - data->offset);
 }
 
-void init_gradientData(gradient_data_struct* gradData, digital_filter* filter,
-        long int cts_at_1Kw){
+void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
   int i = 0;
   gradData->filter = filter;
   // link up the elements of the list
@@ -523,8 +521,23 @@ void init_gradientData(gradient_data_struct* gradData, digital_filter* filter,
   // start with heads at beginnings of arrays
   gradData->inputs_head = gradData->past_inputs;
   gradData->outputs_head = gradData->past_outputs;
-  
-  gradData->cts_at_1kW = cts_at_1Kw;
+}
+
+void set_target_pos(motor_struct* motor, long int pos){
+  if(use_mm_pos){
+    motor->target_pos = mm_to_inch(pos);
+  }
+  else{
+    motor->target_pos = pos;
+  }
+}
+
+long int inch_to_mm(long int inches){
+  return (inches*inch_to_mm_scale) >> 10;
+}
+
+long int mm_to_inch(long int mm){
+  return (mm*mm_to_inch_scale) >> 10;
 }
 
 // check limits of motor targets and step towards targets
@@ -533,20 +546,21 @@ void run_steppers() {
   int i;
   for (i = 0; i < 2; i++) { // run once for each motor
     // give a pulse to the stepper driver if it's time
-    if (motor_pointer->target_pos == motor_pointer->current_pos
+    if (motor_pointer->target_pos == motor_pointer->native_pos
             || abs(motor_pointer->target_pos) > max_travel)
       motor_enable(motor_pointer, 0); // disable motor
     else {
       motor_enable(motor_pointer, 1); // enable motor
       // check if we need a positive step
-      if (motor_pointer->target_pos > motor_pointer->current_pos) {
+      if (motor_pointer->target_pos > motor_pointer->native_pos) {
         step(motor_pointer, 1);
-        motor_pointer->current_pos++;
-      }        // otherwise check if we need a negative step
-      else if (motor_pointer->target_pos < motor_pointer->current_pos) {
+        motor_pointer->native_pos++;
+      }  // otherwise check if we need a negative step
+      else if (motor_pointer->target_pos < motor_pointer->native_pos) {
         step(motor_pointer, 0);
-        motor_pointer->current_pos--;
+        motor_pointer->native_pos--;
       }
+      motor_pointer->alt_pos = inch_to_mm(motor_pointer->native_pos);
      // motor_enable(motor_pointer, 0); // disable motor
     }
     motor_pointer = &motorY; // now do the same as above for motorY
@@ -661,7 +675,8 @@ void doCommand(command_struct* command) {
     serial_bufWrite("<m>Entering reset mode.</m>\n", -1);
   }    // test mode allows the system to accept command line setpoints
   else if (!strncmp(command->arg0, "calib", 5)) {
-    calc_cold_offsets(&quadrant);
+    if(atoi(command->arg2) == 0)
+      calc_offsets(&quadrant);
   }
   else if (!strncmp(command->arg0, "set", 3)) {
 
@@ -687,6 +702,7 @@ void doCommand(command_struct* command) {
       serial_bufWrite("</m>\n", -1);
 
     } else if (!strncmp(command->arg1, "x", 1)) {
+
       motorX.target_pos = atoi(command->arg2);
     } else if (!strncmp(command->arg1, "y", 1)) {
       motorY.target_pos = atoi(command->arg2);
@@ -733,7 +749,19 @@ void doCommand(command_struct* command) {
 
   serial_bufWrite(toPrint2, -1);
 
-  } else {
+  }
+  else if(!strncmp(command->arg0, "zero", 4)){
+    if (!strncmp(command->arg1, "pos", 3)){
+      sprintf(toPrint2,"<m>Zeroing carriage position from (x,y) = (%ld.%04d, %ld.%04d)</m>\n",
+              *(motorX.display_pos)/10000L, abs(*(motorX.display_pos)%10000L),
+              *(motorY.display_pos)/10000L, abs(*(motorY.display_pos)%10000L));
+      motorX.native_pos = 0;
+      motorY.native_pos = 0;
+
+      serial_bufWrite(toPrint2, -1);
+    }
+  }
+  else {
     cmdUnknown(command);
   }
 

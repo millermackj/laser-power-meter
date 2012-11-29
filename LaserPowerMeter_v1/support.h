@@ -11,7 +11,6 @@ Comments:  Support file for definitions and function prototypes
 
 #include "PID.h"
 
-
 #define PI 3.141592653589
 #define SAMP_PERIOD 2         // main loop time in millisec
 
@@ -19,8 +18,11 @@ Comments:  Support file for definitions and function prototypes
 #define AD_PERIOD 6         // time between a/d samples
 #define CALIB_TIME 1000      // time to collect calibration data
 
-#define RTD_100 2464L      // RTD raw counts at 100 degrees Celsius
-#define RTD_0   813L       // RTD raw counts at 0 degrees Celsius
+//#define RTD_100 2464L      // RTD raw counts at 100 degrees Celsius
+//#define RTD_0   813L       // RTD raw counts at 0 degrees Celsius
+#define RTD_100 2654L      // RTD raw counts at 100 degrees Celsius
+#define RTD_0   1003L       // RTD raw counts at 0 degrees Celsius
+
 
 // set the follow to zero if the device is uncalibrated
 #define QUADA_1KW  0        // quadrant A raw counts at 1kW centered
@@ -47,8 +49,6 @@ Comments:  Support file for definitions and function prototypes
 
 #define SYS_RESET 0         // system states
 #define SYS_GO 1
-
-
 
 #define THERM1_CHANNEL 0    // thermopile quadrant 1 (east), AN0
 #define THERM2_CHANNEL 1    // thermopile quadrant 2 (north), AN1
@@ -134,8 +134,11 @@ typedef struct{ // for stepper motor with driver
   int DIR_PIN;
   int STEP_PIN;
   int ENABLE_PIN;
-  int target_pos;
-  int current_pos;
+  long int target_pos;
+  long int native_pos;
+  long int alt_pos;
+  long int conversion_scale;
+  long int* display_pos;
 }motor_struct;
 
 // data structure to hold a row of data to send over serial connection
@@ -178,8 +181,6 @@ typedef struct {
   double dbl_scale; // floating pont scaling factor
   long int cts_at_1kW; // raw counts readout at 1kW centered power
 }gradient_data_struct;
-
-
 
 
 // struct to hold the arguments of an incoming command from serial connection
@@ -240,8 +241,12 @@ void init_gradientData(gradient_data_struct* gradData, digital_filter* filter);
 long int differentiate(gradient_data_struct* data);
 long unsigned int integrate(gradient_data_struct* data);
 long int get_average(gradient_data_struct* data);
+void calc_offsets(gradient_data_struct (*data)[]);
 void calc_cold_offsets(gradient_data_struct (*data)[]);
-void calc_1kW_scaling(gradient_data_struct (*data)[]);
+void calc_1kW_scaling(gradient_data_struct *data);
 void calc_scale(gradient_data_struct* data, long int delta_Y, long int delta_X);
-void calc_scale(gradient_data_struct* data, double dbl_scale);
+void calc_scale_dbl(gradient_data_struct* data, double dbl_scale);
+void set_target_pos(motor_struct* motor, long int pos);
+long int inch_to_mm(long int inches);
+long int mm_to_inch(long int mm);
 #endif

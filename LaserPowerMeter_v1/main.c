@@ -22,7 +22,7 @@ functions.c, support.h
 // global variable declarations
 #define BLINK_PERIOD 250// ms between blinking of light
 #define POST_PERIOD 41 // ms between serial data postings
-#define STEP_PERIOD 2   // ms between stepper motor pulses
+#define STEP_PERIOD 3   // ms between stepper motor pulses
 
 
 long unsigned int run_time = 0; // 1 ms increments, resets at 49.7 days
@@ -59,6 +59,11 @@ post_data data; // row of data for serial posting
 
 // stepper maximum travel +/-
 int max_travel = 10000;
+
+long int inch_to_mm_scale;
+long int mm_to_inch_scale;
+
+int use_mm_pos = 1; // use mm instead of inches for encoders
 
 // structure array to store data from each of the thermopiles
 gradient_data_struct quadrant[5];
@@ -97,6 +102,10 @@ int main() {
     quadrant[i].k2 = 1000 - EWMA_CONSTANT;
     init_gradientData(&(quadrant[i]), &butter3);
   }
+  quadrant[0].cts_at_1kW = QUADA_1KW;
+  quadrant[1].cts_at_1kW = QUADB_1KW;
+  quadrant[2].cts_at_1kW = QUADC_1KW;
+  quadrant[3].cts_at_1kW = QUADD_1KW;
 
   // conversion factors and stepper motor driver pins
   motorX.enc.cts_per_unit = CTS_PER_MM; // encoder counts per mm
@@ -107,7 +116,7 @@ int main() {
   motor_enable(&motorX, 0); // disable motorX
   // stepper destinations
   motorX.target_pos = 0;
-  motorX.current_pos = 0;
+  motorX.native_pos = 0;
 
   motorY.enc.cts_per_unit = CTS_PER_MM; // encoder counts per mm
   motorY.LATCH = &MOTY_LATCH;
@@ -116,15 +125,31 @@ int main() {
   motorY.ENABLE_PIN = MOTY_EN;
   motor_enable(&motorY, 0); // disable motorY
   motorY.target_pos = 0;
-  motorY.current_pos = 0;
+  motorY.native_pos = 0;
 
   // for posting data to serial port
   serial_begin(BAUDRATE); // initiatize serial connection at 115000 baud
-  char * headings[] = {"Time", "X-Step", "Y-Step", "QuadA", "QuadB", "QuadC",
-    "QuadD", "Temp"
-          ,"QuadA_filt", "QuadB_filt", "QuadC_filt", "QuadD_filt", "Temp_filt"};
+  char * headings[] = {"Time", "X-Step", "Y-Step", "East", "North", "West",
+    "South", "Temp"
+          ,"East_filt", "North_filt", "West_filt", "South_filt", "Temp_filt"};
   char* units[] = {"seconds", "in", "in", "cts", "cts", "cts", "cts", "cts"
-          ,"cts", "cts", "cts", "cts", "cts"};
+          ,"cts", "cts", "cts", "cts", "deg C"};
+
+  inch_to_mm_scale = (long int)((1.0/25.4)*powf(2,10));
+  mm_to_inch_scale = (long int)(25.4*powf(2,10));
+
+
+
+  if(use_mm_pos){
+    units[1] = "mm";
+    units[2] = "mm";
+    motorX.display_pos = &(motorX.alt_pos);
+    motorY.display_pos = &(motorY.alt_pos);
+  }
+  else{
+    motorX.display_pos = &(motorX.native_pos);
+    motorY.display_pos = &(motorY.native_pos);    
+  }
 
   // initialize serial output format
   initPostData(&data, headings, units, NUM_COLUMNS);
@@ -168,16 +193,15 @@ int main() {
   
   for(i = 0; i < 4; i++){
     long int delta_X;;
-    if(quadrant[i]->cts_at_1kW > 0)
-      delta_X = quadrant[i]->cts_at_1kW - quadrant[i]->offset;
+    if(quadrant[i].cts_at_1kW > 0)
+      delta_X = quadrant[i].cts_at_1kW - quadrant[i].offset;
     else
       delta_X  = 1000; // for uncalibrated device
-
-    calc_scale(&(quadrant[i]), 1000, quadrant[i]->cts_at_1kW - quadrant[i]->offset);
+    calc_scale(&(quadrant[i]), 1000, delta_X);
   }
 
   // temperature calibration. values of RTD_XXX values are defined in support.h
-  calc_scale(&(quadrant[4]), 100, RTD_100 - RTD_0)
+  calc_scale_dbl(&(quadrant[4]), 1000.0/(double)(RTD_100-RTD_0));
   quadrant[4].offset = RTD_0;
 
   // Start of main loop (1 msec sample period)
@@ -251,9 +275,8 @@ int main() {
       //  post the current row of data to the serial port
       if (postflag && post_clock <= run_time) {
         snprintf(data.dataRow[0], 9, "%lu.%03lu", run_time / 1000, run_time % 1000); // run time seconds
-        snprintf(data.dataRow[1], 9, "%c.%04d", (motorX.current_pos < 0 ? '-' : '0'), abs(motorX.current_pos) % 10000);
-        //(double) (x_pos/10000.0)); // x position mm
-        snprintf(data.dataRow[2], 9, "%c.%04d", (motorY.current_pos < 0 ? '-' : '0'), abs(motorY.current_pos) % 10000);
+        snprintf(data.dataRow[1], 9, "%ld.%04d", *(motorX.display_pos) / 10000, abs(*(motorX.display_pos) % 10000));
+        snprintf(data.dataRow[2], 9, "%ld.%04d", *(motorY.display_pos) / 10000, abs(*(motorY.display_pos) % 10000));
         snprintf(data.dataRow[3], 9, "%ld", quadrant[THERM1_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[4], 9, "%ld", quadrant[THERM2_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[5], 9, "%ld", quadrant[THERM3_CHANNEL].unfiltered_value);
@@ -263,7 +286,7 @@ int main() {
         snprintf(data.dataRow[9], 9, "%ld", quadrant[THERM2_CHANNEL].filtered_value);
         snprintf(data.dataRow[10], 9, "%ld", quadrant[THERM3_CHANNEL].filtered_value);
         snprintf(data.dataRow[11], 9, "%ld", quadrant[THERM4_CHANNEL].filtered_value);
-        snprintf(data.dataRow[12], 9, "%ld", quadrant[TEMP_CHANNEL].filtered_value);
+        snprintf(data.dataRow[12], 9, "%ld.%d", quadrant[TEMP_CHANNEL].filtered_value/10, abs(quadrant[TEMP_CHANNEL].filtered_value%10));
 
         postRowData(&data);
         post_clock = run_time + post_period; // reset posting clock
