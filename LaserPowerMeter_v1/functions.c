@@ -35,6 +35,7 @@ extern gradient_data_struct quadrant[];
 extern int use_simple_filter; // flag to use EWMA instead of butterworth
 extern int inch_to_mm_scale;
 extern int mm_to_inch_scale;
+extern int need_user_confirm;
 
 // Initialize of Clock Frequency
 
@@ -323,7 +324,7 @@ void step(motor_struct* motor, int direction){
   unsigned int tempLATCH = *(motor->LATCH) & ~(motor->DIR_PIN | motor->STEP_PIN);
   *(motor->LATCH) = tempLATCH | motor->DIR_PIN*direction | motor->STEP_PIN;
   for(i = 0; i < 10; i++); // wait for pulse to be raised
-  *(motor->LATCH) = tempLATCH | motor->DIR_PIN*direction; // remove the pulse and disable;
+  *(motor->LATCH) = tempLATCH | motor->DIR_PIN*direction; // remove the pulse
 }
 
 // enable or disable stepper motor
@@ -702,11 +703,23 @@ void doCommand(command_struct* command) {
       serial_bufWrite("</m>\n", -1);
 
     } else if (!strncmp(command->arg1, "x", 1)) {
-
-      motorX.target_pos = atoi(command->arg2);
+      if(use_mm_pos)
+        motorX.target_pos = mm_to_inch((long int)(atof(command->arg2)*10));
+      else
+        motorX.target_pos = atoi(command->arg2);
     } else if (!strncmp(command->arg1, "y", 1)) {
-      motorY.target_pos = atoi(command->arg2);
-    } else if (!strncmp(command->arg1, "alpha", 1)) {
+      if(use_mm_pos)
+        motorY.target_pos = mm_to_inch((long int)(atof(command->arg2)*10));
+      else
+        motorY.target_pos = atoi(command->arg2);
+    } else if(!strncmp(command->arg1, "temp", 1)) {
+      quadrant[TEMP_CHANNEL].offset = get_average(&(quadrant[TEMP_CHANNEL])) 
+              - (long int)(atof(command->arg2)*10
+              /quadrant[TEMP_CHANNEL].dbl_scale);
+      sprintf(toPrint2, "<m>temp channel offset: %ld</m>\n", quadrant[TEMP_CHANNEL].offset);
+      serial_bufWrite(toPrint2, -1);
+      }
+     else if (!strncmp(command->arg1, "alpha", 1)) {
       int i;
       for (i = 0; i < 5; i++) {
         quadrant[i].k1 = atoi(command->arg2);
@@ -728,17 +741,29 @@ void doCommand(command_struct* command) {
       postflag = 1;
     }
   } else if (!strncmp(command->arg0, "xp", 2)) { // step commands
-    motor_enable(&motorX, 1);
-    motorX.target_pos += atoi(command->arg1);
+    if (use_mm_pos)
+      
+      motorX.target_pos += mm_to_inch((long int) (atof(command->arg1)*10));
+    else
+      motorX.target_pos += atoi(command->arg1);
+
   } else if (!strncmp(command->arg0, "xm", 2)) { // step commands
-    motor_enable(&motorX, 1);
-    motorX.target_pos -= atoi(command->arg1);
+
+     if(use_mm_pos)
+        motorX.target_pos -= mm_to_inch((long int)(atof(command->arg1)*10));
+      else
+        motorX.target_pos -= atoi(command->arg1);
+
   } else if (!strncmp(command->arg0, "yp", 2)) { // step commands
-    motor_enable(&motorY, 1);
-    motorY.target_pos += atoi(command->arg1);
+    if (use_mm_pos)
+      motorY.target_pos += mm_to_inch((long int) (atof(command->arg1)*10));
+    else
+      motorY.target_pos += atoi(command->arg1);
   } else if (!strncmp(command->arg0, "ym", 2)) { // step commands
-    motor_enable(&motorY, 1);
-    motorY.target_pos -= atoi(command->arg1);
+     if(use_mm_pos)
+        motorY.target_pos -= mm_to_inch((long int)(atof(command->arg1)*10));
+      else
+        motorY.target_pos -= atoi(command->arg1);
   } else if (!strncmp(command->arg0, "deriv", 2)) { // get derivatives of signals
   sprintf(toPrint2, "<m>derivatives: time = %ld\na: %ld\nb: %ld\nc: %ld\nd: %ld</m>\n",
           run_time,
@@ -757,6 +782,10 @@ void doCommand(command_struct* command) {
               *(motorY.display_pos)/10000L, abs(*(motorY.display_pos)%10000L));
       motorX.native_pos = 0;
       motorY.native_pos = 0;
+      motorX.alt_pos = 0;
+      motorY.alt_pos = 0;
+      motorX.target_pos = 0;
+      motorY.target_pos = 0;
 
       serial_bufWrite(toPrint2, -1);
     }

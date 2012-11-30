@@ -38,12 +38,14 @@ int blink_period = BLINK_PERIOD;
 int post_period = POST_PERIOD; // ms between each post (minus 16 for an unknown reason)
 int AD_period = AD_PERIOD; // ms between data collection
 int step_period = STEP_PERIOD;
+int pos_control_period = 1000; // ms between determining a new position target
 long unsigned int AD_clock = 0;
 long unsigned int blink_clock = 0; // ms blink rate
 long unsigned int post_clock = 0; // next time to post serial data
+long unsigned int pos_control_clock = 0;
+
 int postflag = 1; // set if we want to post row data to serial
 int use_simple_filter = 1; // set to zero for butterworth digital filter
-
 int printHeader = 1; // flag to print header next post or not
 char toprint[BUFFER_SIZE];
 
@@ -64,6 +66,8 @@ long int inch_to_mm_scale;
 long int mm_to_inch_scale;
 
 int use_mm_pos = 1; // use mm instead of inches for encoders
+
+int need_user_confirm = 0;
 
 // structure array to store data from each of the thermopiles
 gradient_data_struct quadrant[5];
@@ -131,14 +135,12 @@ int main() {
   serial_begin(BAUDRATE); // initiatize serial connection at 115000 baud
   char * headings[] = {"Time", "X-Step", "Y-Step", "East", "North", "West",
     "South", "Temp"
-          ,"East_filt", "North_filt", "West_filt", "South_filt", "Temp_filt"};
+          ,"East", "North", "West", "South", "Temp"};
   char* units[] = {"seconds", "in", "in", "cts", "cts", "cts", "cts", "cts"
-          ,"cts", "cts", "cts", "cts", "deg C"};
+          ,"Watts", "Watts", "Watts", "Watts", "Deg C"};
 
   inch_to_mm_scale = (long int)((1.0/25.4)*powf(2,10));
-  mm_to_inch_scale = (long int)(25.4*powf(2,10));
-
-
+  mm_to_inch_scale = (long int)(25.4*powf(2,10))+1;
 
   if(use_mm_pos){
     units[1] = "mm";
@@ -275,8 +277,8 @@ int main() {
       //  post the current row of data to the serial port
       if (postflag && post_clock <= run_time) {
         snprintf(data.dataRow[0], 9, "%lu.%03lu", run_time / 1000, run_time % 1000); // run time seconds
-        snprintf(data.dataRow[1], 9, "%ld.%04d", *(motorX.display_pos) / 10000, abs(*(motorX.display_pos) % 10000));
-        snprintf(data.dataRow[2], 9, "%ld.%04d", *(motorY.display_pos) / 10000, abs(*(motorY.display_pos) % 10000));
+        snprintf(data.dataRow[1], 9, "%ld.%1d", *(motorX.display_pos) / 10, abs(*(motorX.display_pos) % 10));
+        snprintf(data.dataRow[2], 9, "%ld.%1d", *(motorY.display_pos) / 10, abs(*(motorY.display_pos) % 10));
         snprintf(data.dataRow[3], 9, "%ld", quadrant[THERM1_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[4], 9, "%ld", quadrant[THERM2_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[5], 9, "%ld", quadrant[THERM3_CHANNEL].unfiltered_value);

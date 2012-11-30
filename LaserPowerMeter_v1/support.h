@@ -20,15 +20,15 @@ Comments:  Support file for definitions and function prototypes
 
 //#define RTD_100 2464L      // RTD raw counts at 100 degrees Celsius
 //#define RTD_0   813L       // RTD raw counts at 0 degrees Celsius
-#define RTD_100 2654L      // RTD raw counts at 100 degrees Celsius
-#define RTD_0   1003L       // RTD raw counts at 0 degrees Celsius
+#define RTD_100 2605L      // RTD raw counts at 100 degrees Celsius
+#define RTD_0   954L       // RTD raw counts at 0 degrees Celsius
 
 
 // set the follow to zero if the device is uncalibrated
-#define QUADA_1KW  0        // quadrant A raw counts at 1kW centered
-#define QUADB_1KW  0        // quadrant B raw counts at 1kW centered
-#define QUADC_1KW  0        // quadrant C raw counts at 1kW centered
-#define QUADD_1KW  0        // quadrant D raw counts at 1kW centered
+#define QUADA_1KW  2000        // quadrant A raw counts at 1kW centered
+#define QUADB_1KW  2000        // quadrant B raw counts at 1kW centered
+#define QUADC_1KW  2000        // quadrant C raw counts at 1kW centered
+#define QUADD_1KW  2000        // quadrant D raw counts at 1kW centered
 
 #define WAIT i=0;while(i<15)i++;
 

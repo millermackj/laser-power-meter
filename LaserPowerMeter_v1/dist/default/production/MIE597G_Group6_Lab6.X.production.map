@@ -82,6 +82,8 @@ Archive member included because of file (symbol)
                               /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(fmodrem.eo) (_errno)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(fcompare.eo)
                               /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(feqltle.eo) (__fcompare)
+/Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atof.XXeo)
+                              build/default/production/functions.o (_atof)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atoi.XXeo)
                               build/default/production/functions.o (_atoi)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strlen.XXeo)
@@ -103,7 +105,7 @@ Archive member included because of file (symbol)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isalpha.XXelo)
                               /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo) (_isalpha)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isspace.XXelo)
-                              /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo) (_isspace)
+                              /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atof.XXeo) (_isspace)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isupper.XXelo)
                               /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo) (_isupper)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(tolower.XXelo)
@@ -129,7 +131,7 @@ Archive member included because of file (symbol)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
                               /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo) (___C30_UART)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
-                              /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo) (___mulsi3)
+                              /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atof.XXeo) (___mulsi3)
 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
                               /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo) (___udivdi3)
 
@@ -138,12 +140,12 @@ Program Memory  [Origin = 0x200, Length = 0xa9fe]
 
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
-.text                        0x200              0x13d6          0x1dc1  (7617)
-.const                      0x15d6               0x348           0x4ec  (1260)
-.text                       0x191e              0x1c7c          0x2aba  (10938)
-.dinit                      0x359a               0x1b2           0x28b  (651)
+.text                        0x200              0x15be          0x209d  (8349)
+.const                      0x17be               0x33e           0x4dd  (1245)
+.text                       0x1afc              0x1d94          0x2c5e  (11358)
+.dinit                      0x3890               0x1b8           0x294  (660)
 
-                     Total program memory used (bytes):         0x4ff2  (20466) 31%
+                     Total program memory used (bytes):         0x546c  (21612) 33%
 
 
 Data Memory  [Origin = 0x800, Length = 0x2000]
@@ -151,26 +153,26 @@ Data Memory  [Origin = 0x800, Length = 0x2000]
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
 .nbss                        0x800                   0          0x15aa  (5546)
-.ndata                      0x1daa                   0           0x12e  (302)
-.nbss                       0x1ed8                   0             0x2  (2)
-.data                       0x1eda                   0            0xa0  (160)
-.dconst                     0x1f7a                   0            0x2a  (42)
-.data                       0x1fa4                   0            0x26  (38)
-.bss                        0x1fca                   0             0x8  (8)
-.data                       0x1fd2                   0             0x2  (2)
-.heap                       0x1fd4                   0           0x400  (1024)
+.ndata                      0x1daa                   0           0x136  (310)
+.nbss                       0x1ee0                   0             0x2  (2)
+.data                       0x1ee2                   0            0xa0  (160)
+.dconst                     0x1f82                   0            0x2a  (42)
+.data                       0x1fac                   0            0x26  (38)
+.bss                        0x1fd2                   0             0x8  (8)
+.data                       0x1fda                   0             0x2  (2)
+.heap                       0x1fdc                   0           0x400  (1024)
 
-                        Total data memory used (bytes):         0x1bd4  (7124) 86%
+                        Total data memory used (bytes):         0x1bdc  (7132) 87%
 
 
 Dynamic Memory Usage
 
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
-heap                        0x1fd4                               0x400  (1024)
-stack                       0x23d4                               0x42c  (1068)
+heap                        0x1fdc                               0x400  (1024)
+stack                       0x23dc                               0x424  (1060)
 
-                        Maximum dynamic memory (bytes):          0x82c  (2092)
+                        Maximum dynamic memory (bytes):          0x824  (2084)
 
 
 External Symbols in Data Memory (by address):
@@ -210,42 +212,45 @@ External Symbols in Data Memory (by address):
                     0x1dc0                  _post_period
                     0x1dc2                  _AD_period
                     0x1dc4                  _step_period
-                    0x1dc6                  _AD_clock
-                    0x1dca                  _blink_clock
-                    0x1dce                  _post_clock
-                    0x1dd2                  _postflag
-                    0x1dd4                  _use_simple_filter
-                    0x1dd6                  _printHeader
-                    0x1dd8                  _LED
-                    0x1dde                  _max_travel
-                    0x1de0                  _use_mm_pos
-                    0x1de2                  _butter3
-                    0x1ed4                  _step_clock
-                    0x1fa4                  __Files
-                    0x1fa6                  __iob
-                    0x1fca                  __sobuf
-                    0x1fcc                  __sibuf
-                    0x1fce                  __outdone
-                    0x1fd2                  ___C30_UART
+                    0x1dc6                  _pos_control_period
+                    0x1dc8                  _AD_clock
+                    0x1dcc                  _blink_clock
+                    0x1dd0                  _post_clock
+                    0x1dd4                  _pos_control_clock
+                    0x1dd8                  _postflag
+                    0x1dda                  _use_simple_filter
+                    0x1ddc                  _printHeader
+                    0x1dde                  _LED
+                    0x1de4                  _max_travel
+                    0x1de6                  _use_mm_pos
+                    0x1de8                  _need_user_confirm
+                    0x1dea                  _butter3
+                    0x1edc                  _step_clock
+                    0x1fac                  __Files
+                    0x1fae                  __iob
+                    0x1fd2                  __sobuf
+                    0x1fd4                  __sibuf
+                    0x1fd6                  __outdone
+                    0x1fda                  ___C30_UART
 
 External Symbols in Data Memory (by name):
 
                     0x0a00                  _AD_channel
-                    0x1dc6                  _AD_clock
+                    0x1dc8                  _AD_clock
                     0x1dc2                  _AD_period
-                    0x1dd8                  _LED
+                    0x1dde                  _LED
                     0x1db8                  _LED_BLINK
                     0x1dba                  _LED_OFF
                     0x1dbc                  _LED_ON
-                    0x1fa4                  __Files
-                    0x1fd2                  ___C30_UART
-                    0x1fa6                  __iob
-                    0x1fce                  __outdone
-                    0x1fcc                  __sibuf
-                    0x1fca                  __sobuf
-                    0x1dca                  _blink_clock
+                    0x1fac                  __Files
+                    0x1fda                  ___C30_UART
+                    0x1fae                  __iob
+                    0x1fd6                  __outdone
+                    0x1fd4                  __sibuf
+                    0x1fd2                  __sobuf
+                    0x1dcc                  _blink_clock
                     0x1dbe                  _blink_period
-                    0x1de2                  _butter3
+                    0x1dea                  _butter3
                     0x199a                  _bytesAvailable
                     0x1998                  _bytesRemaining
                     0x0a72                  _command
@@ -255,50 +260,53 @@ External Symbols in Data Memory (by name):
                     0x158e                  _inputBuffer
                     0x178e                  _inputHead
                     0x1790                  _inputTail
-                    0x1dde                  _max_travel
+                    0x1de4                  _max_travel
                     0x0b30                  _mm_to_inch_scale
                     0x0a02                  _motorX
                     0x0a3a                  _motorY
+                    0x1de8                  _need_user_confirm
                     0x1996                  _newByte
                     0x1792                  _outputBuffer
                     0x1992                  _outputHead
                     0x1994                  _outputTail
                     0x1db4                  _pause_all
-                    0x1dce                  _post_clock
+                    0x1dd4                  _pos_control_clock
+                    0x1dc6                  _pos_control_period
+                    0x1dd0                  _post_clock
                     0x1dc0                  _post_period
-                    0x1dd2                  _postflag
-                    0x1dd6                  _printHeader
+                    0x1dd8                  _postflag
+                    0x1ddc                  _printHeader
                     0x0b34                  _quadrant
                     0x1daa                  _run_time
                     0x199c                  _rx_lock
                     0x1dae                  _sample_time
-                    0x1ed4                  _step_clock
+                    0x1edc                  _step_clock
                     0x1dc4                  _step_period
                     0x1db2                  _sys_state
                     0x1db6                  _testing
                     0x1baa                  _toPrint2
                     0x0800                  _toprint
                     0x199e                  _tx_lock
-                    0x1de0                  _use_mm_pos
-                    0x1dd4                  _use_simple_filter
+                    0x1de6                  _use_mm_pos
+                    0x1dda                  _use_simple_filter
                     0x1db0                  _wait_flag
 
 External Symbols in Program Memory (by address):
 
                   0x000200                  __resetPRI
                   0x000222                  __psv_init
-                  0x000232                  __data_init
                   0x000232                  __data_init_standard
+                  0x000232                  __data_init
                   0x000290                  __DefaultInterrupt
                   0x000294                  ___subsf3
                   0x000296                  ___addsf3
                   0x000350                  ___divsf3
                   0x0003d4                  ___divsi3
+                  0x0003f2                  ___lesf2
                   0x0003f2                  ___ltsf2
                   0x0003f2                  ___eqsf2
-                  0x0003f2                  ___lesf2
-                  0x0003f6                  ___gesf2
                   0x0003f6                  ___gtsf2
+                  0x0003f6                  ___gesf2
                   0x0003fa                  ___fixsfsi
                   0x00043c                  ___floatsisf
                   0x000492                  _fmodf
@@ -314,102 +322,104 @@ External Symbols in Program Memory (by address):
                   0x000660                  ___udivsi3
                   0x000680                  ___umodsi3
                   0x000686                  __fcompare
-                  0x0006bc                  _atoi
-                  0x000704                  _strlen
-                  0x000710                  _strncmp
-                  0x000732                  __sprintf_cdnopuxX
-                  0x000760                  __vfprintf_cdnopuxX
-                  0x000cca                  __snprintf_cdnopuxX
-                  0x000cd6                  __vsnprintf_cdnopuxX
-                  0x000d0a                  __sscanf_0
-                  0x000d0a                  __sscanf_s
-                  0x000d7e                  __vfscanf_s
-                  0x000d7e                  __vfscanf_0
-                  0x000fc0                  _isalpha
-                  0x000fd4                  _isspace
-                  0x000fe4                  _isupper
-                  0x000ff0                  _tolower
-                  0x000ffe                  _fgetc
-                  0x0010fa                  _ungetc
-                  0x00113c                  __filbuf
-                  0x00125e                  _fflush
-                  0x001392                  ___mulsi3
-                  0x001392                  ___mulp32eds3
-                  0x001392                  ___mulp32peds3
-                  0x0013c4                  ___udivmoddi3
-                  0x0014ec                  ___udivdi3
-                  0x0014fa                  ___umoddi3
-                  0x001502                  ___divdi3
-                  0x00156e                  ___moddi3
-                  0x00191e                  _init_clock
-                  0x001964                  __T1Interrupt
-                  0x0019a2                  __T2Interrupt
-                  0x0019aa                  _init_samptime
-                  0x0019c0                  _init_pins
-                  0x001a2e                  _btnDebounce
-                  0x001ab4                  _init_ADC
-                  0x001ace                  _init_encoders
-                  0x001b5c                  _read_ADC
-                  0x001b7c                  _readEncoder
-                  0x001c34                  _updateLEDs
-                  0x001c60                  _step
-                  0x001cb6                  _motor_enable
-                  0x001d08                  _filter
-                  0x001ebe                  _differentiate
-                  0x001f4e                  _integrate
-                  0x001f72                  _init_filter
-                  0x001f82                  _get_average
-                  0x001fde                  _calc_scale
-                  0x002042                  _calc_scale_dbl
-                  0x00208c                  _calc_offsets
-                  0x0020cc                  _calc_cold_offsets
-                  0x002200                  _calc_1kW_scaling
-                  0x002228                  _init_gradientData
-                  0x0022f0                  _set_target_pos
-                  0x00231a                  _inch_to_mm
-                  0x002344                  _mm_to_inch
-                  0x00236e                  _run_steppers
-                  0x002426                  _pause_toggle
-                  0x00246e                  _pollForSerial
-                  0x00248c                  _parseInputString
-                  0x0024b4                  _initPostData
-                  0x0024da                  _postHeadings
-                  0x002536                  _postUnits
-                  0x00258a                  _postRowData
-                  0x0025d8                  _doCommand
-                  0x002966                  _cmdUnknown
-                  0x00299c                  _main
-                  0x002f38                  _PID_init
-                  0x002fa8                  _PID_setCoeffs
-                  0x0031d4                  _PID_run
-                  0x0032d2                  _PID_setReference
-                  0x003336                  _PID_clearOld
-                  0x00335e                  _serial_begin
-                  0x0033c6                  __U1RXInterrupt
-                  0x00341a                  __U1TXInterrupt
-                  0x00346a                  _serial_ping
-                  0x003472                  _serialTest
-                  0x003484                  _serial_write
-                  0x0034e6                  _serial_bufWrite
-                  0x003528                  _serial_available
-                  0x003530                  _serial_remaining
-                  0x003538                  _serial_read
-                  0x003592                  _serial_gotNewline
+                  0x0006bc                  _strtod
+                  0x0008a0                  _atof
+                  0x0008a4                  _atoi
+                  0x0008ec                  _strlen
+                  0x0008f8                  _strncmp
+                  0x00091a                  __sprintf_cdnopuxX
+                  0x000948                  __vfprintf_cdnopuxX
+                  0x000eb2                  __snprintf_cdnopuxX
+                  0x000ebe                  __vsnprintf_cdnopuxX
+                  0x000ef2                  __sscanf_0
+                  0x000ef2                  __sscanf_s
+                  0x000f66                  __vfscanf_s
+                  0x000f66                  __vfscanf_0
+                  0x0011a8                  _isalpha
+                  0x0011bc                  _isspace
+                  0x0011cc                  _isupper
+                  0x0011d8                  _tolower
+                  0x0011e6                  _fgetc
+                  0x0012e2                  _ungetc
+                  0x001324                  __filbuf
+                  0x001446                  _fflush
+                  0x00157a                  ___mulsi3
+                  0x00157a                  ___mulp32eds3
+                  0x00157a                  ___mulp32peds3
+                  0x0015ac                  ___udivmoddi3
+                  0x0016d4                  ___udivdi3
+                  0x0016e2                  ___umoddi3
+                  0x0016ea                  ___divdi3
+                  0x001756                  ___moddi3
+                  0x001afc                  _init_clock
+                  0x001b42                  __T1Interrupt
+                  0x001b80                  __T2Interrupt
+                  0x001b88                  _init_samptime
+                  0x001b9e                  _init_pins
+                  0x001c0c                  _btnDebounce
+                  0x001c92                  _init_ADC
+                  0x001cac                  _init_encoders
+                  0x001d3a                  _read_ADC
+                  0x001d5a                  _readEncoder
+                  0x001e12                  _updateLEDs
+                  0x001e3e                  _step
+                  0x001e94                  _motor_enable
+                  0x001ee6                  _filter
+                  0x00209c                  _differentiate
+                  0x00212c                  _integrate
+                  0x002150                  _init_filter
+                  0x002160                  _get_average
+                  0x0021bc                  _calc_scale
+                  0x002220                  _calc_scale_dbl
+                  0x00226a                  _calc_offsets
+                  0x0022aa                  _calc_cold_offsets
+                  0x0023de                  _calc_1kW_scaling
+                  0x002406                  _init_gradientData
+                  0x0024ce                  _set_target_pos
+                  0x0024f8                  _inch_to_mm
+                  0x002522                  _mm_to_inch
+                  0x00254c                  _run_steppers
+                  0x002604                  _pause_toggle
+                  0x00264c                  _pollForSerial
+                  0x00266a                  _parseInputString
+                  0x002692                  _initPostData
+                  0x0026b8                  _postHeadings
+                  0x002714                  _postUnits
+                  0x002768                  _postRowData
+                  0x0027b6                  _doCommand
+                  0x002c54                  _cmdUnknown
+                  0x002c8a                  _main
+                  0x00322e                  _PID_init
+                  0x00329e                  _PID_setCoeffs
+                  0x0034ca                  _PID_run
+                  0x0035c8                  _PID_setReference
+                  0x00362c                  _PID_clearOld
+                  0x003654                  _serial_begin
+                  0x0036bc                  __U1RXInterrupt
+                  0x003710                  __U1TXInterrupt
+                  0x003760                  _serial_ping
+                  0x003768                  _serialTest
+                  0x00377a                  _serial_write
+                  0x0037dc                  _serial_bufWrite
+                  0x00381e                  _serial_available
+                  0x003826                  _serial_remaining
+                  0x00382e                  _serial_read
+                  0x003888                  _serial_gotNewline
 
 External Symbols in Program Memory (by name):
 
-                  0x003336                  _PID_clearOld
-                  0x002f38                  _PID_init
-                  0x0031d4                  _PID_run
-                  0x002fa8                  _PID_setCoeffs
-                  0x0032d2                  _PID_setReference
+                  0x00362c                  _PID_clearOld
+                  0x00322e                  _PID_init
+                  0x0034ca                  _PID_run
+                  0x00329e                  _PID_setCoeffs
+                  0x0035c8                  _PID_setReference
                   0x000290                  __DefaultInterrupt
-                  0x001964                  __T1Interrupt
-                  0x0019a2                  __T2Interrupt
-                  0x0033c6                  __U1RXInterrupt
-                  0x00341a                  __U1TXInterrupt
+                  0x001b42                  __T1Interrupt
+                  0x001b80                  __T2Interrupt
+                  0x0036bc                  __U1RXInterrupt
+                  0x003710                  __U1TXInterrupt
                   0x000296                  ___addsf3
-                  0x001502                  ___divdi3
+                  0x0016ea                  ___divdi3
                   0x000350                  ___divsf3
                   0x0003d4                  ___divsi3
                   0x0003f2                  ___eqsf2
@@ -419,17 +429,17 @@ External Symbols in Program Memory (by name):
                   0x0003f6                  ___gtsf2
                   0x0003f2                  ___lesf2
                   0x0003f2                  ___ltsf2
-                  0x00156e                  ___moddi3
+                  0x001756                  ___moddi3
                   0x0005da                  ___modsi3
-                  0x001392                  ___mulp32eds3
-                  0x001392                  ___mulp32peds3
+                  0x00157a                  ___mulp32eds3
+                  0x00157a                  ___mulp32peds3
                   0x0005f8                  ___mulsf3
-                  0x001392                  ___mulsi3
+                  0x00157a                  ___mulsi3
                   0x000294                  ___subsf3
-                  0x0014ec                  ___udivdi3
-                  0x0013c4                  ___udivmoddi3
+                  0x0016d4                  ___udivdi3
+                  0x0015ac                  ___udivmoddi3
                   0x000660                  ___udivsi3
-                  0x0014fa                  ___umoddi3
+                  0x0016e2                  ___umoddi3
                   0x000680                  ___umodsi3
                   0x000232                  __data_init
                   0x000232                  __data_init_standard
@@ -437,77 +447,79 @@ External Symbols in Program Memory (by name):
                   0x0005cc                  __fbopExit
                   0x0005d4                  __fbopReturnNaN
                   0x000686                  __fcompare
-                  0x00113c                  __filbuf
+                  0x001324                  __filbuf
                   0x000496                  __fmodrem
                   0x000534                  __fpack
                   0x000580                  __funpack
                   0x0005aa                  __funpack2
                   0x000222                  __psv_init
                   0x000200                  __resetPRI
-                  0x000cca                  __snprintf_cdnopuxX
-                  0x000732                  __sprintf_cdnopuxX
-                  0x000d0a                  __sscanf_0
-                  0x000d0a                  __sscanf_s
-                  0x000760                  __vfprintf_cdnopuxX
-                  0x000d7e                  __vfscanf_0
-                  0x000d7e                  __vfscanf_s
-                  0x000cd6                  __vsnprintf_cdnopuxX
-                  0x0006bc                  _atoi
-                  0x001a2e                  _btnDebounce
-                  0x002200                  _calc_1kW_scaling
-                  0x0020cc                  _calc_cold_offsets
-                  0x00208c                  _calc_offsets
-                  0x001fde                  _calc_scale
-                  0x002042                  _calc_scale_dbl
-                  0x002966                  _cmdUnknown
-                  0x001ebe                  _differentiate
-                  0x0025d8                  _doCommand
-                  0x00125e                  _fflush
-                  0x000ffe                  _fgetc
-                  0x001d08                  _filter
+                  0x000eb2                  __snprintf_cdnopuxX
+                  0x00091a                  __sprintf_cdnopuxX
+                  0x000ef2                  __sscanf_0
+                  0x000ef2                  __sscanf_s
+                  0x000948                  __vfprintf_cdnopuxX
+                  0x000f66                  __vfscanf_0
+                  0x000f66                  __vfscanf_s
+                  0x000ebe                  __vsnprintf_cdnopuxX
+                  0x0008a0                  _atof
+                  0x0008a4                  _atoi
+                  0x001c0c                  _btnDebounce
+                  0x0023de                  _calc_1kW_scaling
+                  0x0022aa                  _calc_cold_offsets
+                  0x00226a                  _calc_offsets
+                  0x0021bc                  _calc_scale
+                  0x002220                  _calc_scale_dbl
+                  0x002c54                  _cmdUnknown
+                  0x00209c                  _differentiate
+                  0x0027b6                  _doCommand
+                  0x001446                  _fflush
+                  0x0011e6                  _fgetc
+                  0x001ee6                  _filter
                   0x000492                  _fmodf
-                  0x001f82                  _get_average
-                  0x00231a                  _inch_to_mm
-                  0x0024b4                  _initPostData
-                  0x001ab4                  _init_ADC
-                  0x00191e                  _init_clock
-                  0x001ace                  _init_encoders
-                  0x001f72                  _init_filter
-                  0x002228                  _init_gradientData
-                  0x0019c0                  _init_pins
-                  0x0019aa                  _init_samptime
-                  0x001f4e                  _integrate
-                  0x000fc0                  _isalpha
-                  0x000fd4                  _isspace
-                  0x000fe4                  _isupper
-                  0x00299c                  _main
-                  0x002344                  _mm_to_inch
-                  0x001cb6                  _motor_enable
-                  0x00248c                  _parseInputString
-                  0x002426                  _pause_toggle
-                  0x00246e                  _pollForSerial
-                  0x0024da                  _postHeadings
-                  0x00258a                  _postRowData
-                  0x002536                  _postUnits
-                  0x001b7c                  _readEncoder
-                  0x001b5c                  _read_ADC
-                  0x00236e                  _run_steppers
-                  0x003472                  _serialTest
-                  0x003528                  _serial_available
-                  0x00335e                  _serial_begin
-                  0x0034e6                  _serial_bufWrite
-                  0x003592                  _serial_gotNewline
-                  0x00346a                  _serial_ping
-                  0x003538                  _serial_read
-                  0x003530                  _serial_remaining
-                  0x003484                  _serial_write
-                  0x0022f0                  _set_target_pos
-                  0x001c60                  _step
-                  0x000704                  _strlen
-                  0x000710                  _strncmp
-                  0x000ff0                  _tolower
-                  0x0010fa                  _ungetc
-                  0x001c34                  _updateLEDs
+                  0x002160                  _get_average
+                  0x0024f8                  _inch_to_mm
+                  0x002692                  _initPostData
+                  0x001c92                  _init_ADC
+                  0x001afc                  _init_clock
+                  0x001cac                  _init_encoders
+                  0x002150                  _init_filter
+                  0x002406                  _init_gradientData
+                  0x001b9e                  _init_pins
+                  0x001b88                  _init_samptime
+                  0x00212c                  _integrate
+                  0x0011a8                  _isalpha
+                  0x0011bc                  _isspace
+                  0x0011cc                  _isupper
+                  0x002c8a                  _main
+                  0x002522                  _mm_to_inch
+                  0x001e94                  _motor_enable
+                  0x00266a                  _parseInputString
+                  0x002604                  _pause_toggle
+                  0x00264c                  _pollForSerial
+                  0x0026b8                  _postHeadings
+                  0x002768                  _postRowData
+                  0x002714                  _postUnits
+                  0x001d5a                  _readEncoder
+                  0x001d3a                  _read_ADC
+                  0x00254c                  _run_steppers
+                  0x003768                  _serialTest
+                  0x00381e                  _serial_available
+                  0x003654                  _serial_begin
+                  0x0037dc                  _serial_bufWrite
+                  0x003888                  _serial_gotNewline
+                  0x003760                  _serial_ping
+                  0x00382e                  _serial_read
+                  0x003826                  _serial_remaining
+                  0x00377a                  _serial_write
+                  0x0024ce                  _set_target_pos
+                  0x001e3e                  _step
+                  0x0008ec                  _strlen
+                  0x0008f8                  _strncmp
+                  0x0006bc                  _strtod
+                  0x0011d8                  _tolower
+                  0x0012e2                  _ungetc
+                  0x001e12                  _updateLEDs
 
 Memory Configuration
 
@@ -568,7 +580,7 @@ LOAD /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/dsPIC33F/libp33FJ
                   0x000002          0x2 SHORT 0x0 ((ABSOLUTE (__reset) >> 0x10) & 0x7f)
                   0x000003          0x2 SHORT 0x0
 
-.text             0x000200       0x13d6
+.text             0x000200       0x15be
  *(.init)
  .init            0x000200         0x32 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(crt0_standard.o)
                   0x000200                  __reset
@@ -636,79 +648,83 @@ LOAD /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/dsPIC33F/libp33FJ
  .libm.fcompare
                   0x000686         0x36 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(fcompare.eo)
                   0x000686                  __fcompare
- .libc.atoi       0x0006bc         0x48 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atoi.XXeo)
-                  0x0006bc                  _atoi
- .libc.strlen     0x000704          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strlen.XXeo)
-                  0x000704                  _strlen
- .libc.strncmp    0x000710         0x22 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strncmp.XXeo)
-                  0x000710                  _strncmp
+ .libc.strtod     0x0006bc        0x1e4 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atof.XXeo)
+                  0x0006bc                  _strtod
+ .libc.atof       0x0008a0          0x4 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atof.XXeo)
+                  0x0008a0                  _atof
+ .libc.atoi       0x0008a4         0x48 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atoi.XXeo)
+                  0x0008a4                  _atoi
+ .libc.strlen     0x0008ec          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strlen.XXeo)
+                  0x0008ec                  _strlen
+ .libc.strncmp    0x0008f8         0x22 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strncmp.XXeo)
+                  0x0008f8                  _strncmp
  .libc._sprintf_cdnopuxX
-                  0x000732         0x2e /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sprintf_cdnopuxX.XXeo)
-                  0x000732                  __sprintf_cdnopuxX
+                  0x00091a         0x2e /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sprintf_cdnopuxX.XXeo)
+                  0x00091a                  __sprintf_cdnopuxX
  .libc._vfprintf_cdnopuxX
-                  0x000760        0x56a /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
-                  0x000760                  __vfprintf_cdnopuxX
+                  0x000948        0x56a /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
+                  0x000948                  __vfprintf_cdnopuxX
  .libc._snprintf_cdnopuxX
-                  0x000cca          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(snprintf_cdnopuxX.XXeo)
-                  0x000cca                  __snprintf_cdnopuxX
+                  0x000eb2          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(snprintf_cdnopuxX.XXeo)
+                  0x000eb2                  __snprintf_cdnopuxX
  .libc._vsnprintf_cdnopuxX
-                  0x000cd6         0x34 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(vsnprintf_cdnopuxX.XXeo)
-                  0x000cd6                  __vsnprintf_cdnopuxX
+                  0x000ebe         0x34 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(vsnprintf_cdnopuxX.XXeo)
+                  0x000ebe                  __vsnprintf_cdnopuxX
  .libc._sscanf_s
-                  0x000d0a         0x1c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sscanf_s.XXeo)
-                  0x000d0a                  __sscanf_s
-                  0x000d0a                  __sscanf_0
- .libc.range      0x000d26         0x3c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
- .libc.wspace     0x000d62         0x1c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
+                  0x000ef2         0x1c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sscanf_s.XXeo)
+                  0x000ef2                  __sscanf_s
+                  0x000ef2                  __sscanf_0
+ .libc.range      0x000f0e         0x3c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
+ .libc.wspace     0x000f4a         0x1c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
  .libc._vfscanf_s
-                  0x000d7e        0x242 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
-                  0x000d7e                  __vfscanf_0
-                  0x000d7e                  __vfscanf_s
- .libc.isalpha    0x000fc0         0x14 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isalpha.XXelo)
-                  0x000fc0                  _isalpha
- .libc.isspace    0x000fd4         0x10 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isspace.XXelo)
-                  0x000fd4                  _isspace
- .libc.isupper    0x000fe4          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isupper.XXelo)
-                  0x000fe4                  _isupper
- .libc.tolower    0x000ff0          0xe /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(tolower.XXelo)
-                  0x000ff0                  _tolower
- .libc.fgetc      0x000ffe         0x68 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fgetc.XXelo)
-                  0x000ffe                  _fgetc
- .libc.fputc      0x001066         0x94 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fputc.XXelo)
-                  0x001066                  _fputc
- .libc.ungetc     0x0010fa         0x42 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(ungetc.XXelo)
-                  0x0010fa                  _ungetc
- .libc._filbuf    0x00113c         0x9c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(filbuf.XXeo)
-                  0x00113c                  __filbuf
- .libc._flsbuf    0x0011d8         0x86 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(flsbuf.XXeo)
-                  0x0011d8                  __flsbuf
- .libc.fflush     0x00125e         0x54 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fflush.XXeo)
-                  0x00125e                  _fflush
- .libc.read       0x0012b2         0x72 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
-                  0x0012b2                  _read
- .libc.write      0x001324         0x6e /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
-                  0x001324                  _write
- .libc.mulsi3     0x001392          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
-                  0x001392                  ___mulp32eds3
-                  0x001392                  ___mulp32peds3
-                  0x001392                  ___mulsi3
+                  0x000f66        0x242 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
+                  0x000f66                  __vfscanf_0
+                  0x000f66                  __vfscanf_s
+ .libc.isalpha    0x0011a8         0x14 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isalpha.XXelo)
+                  0x0011a8                  _isalpha
+ .libc.isspace    0x0011bc         0x10 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isspace.XXelo)
+                  0x0011bc                  _isspace
+ .libc.isupper    0x0011cc          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(isupper.XXelo)
+                  0x0011cc                  _isupper
+ .libc.tolower    0x0011d8          0xe /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(tolower.XXelo)
+                  0x0011d8                  _tolower
+ .libc.fgetc      0x0011e6         0x68 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fgetc.XXelo)
+                  0x0011e6                  _fgetc
+ .libc.fputc      0x00124e         0x94 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fputc.XXelo)
+                  0x00124e                  _fputc
+ .libc.ungetc     0x0012e2         0x42 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(ungetc.XXelo)
+                  0x0012e2                  _ungetc
+ .libc._filbuf    0x001324         0x9c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(filbuf.XXeo)
+                  0x001324                  __filbuf
+ .libc._flsbuf    0x0013c0         0x86 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(flsbuf.XXeo)
+                  0x0013c0                  __flsbuf
+ .libc.fflush     0x001446         0x54 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fflush.XXeo)
+                  0x001446                  _fflush
+ .libc.read       0x00149a         0x72 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+                  0x00149a                  _read
+ .libc.write      0x00150c         0x6e /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+                  0x00150c                  _write
+ .libc.mulsi3     0x00157a          0xc /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
+                  0x00157a                  ___mulp32eds3
+                  0x00157a                  ___mulp32peds3
+                  0x00157a                  ___mulsi3
  .libm.__PplusBdi
-                  0x00139e         0x26 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x001586         0x26 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
  .libm.__udivmoddi3
-                  0x0013c4        0x128 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
-                  0x0013c4                  ___udivmoddi3
+                  0x0015ac        0x128 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x0015ac                  ___udivmoddi3
  .libm.__udivdi3
-                  0x0014ec          0xe /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
-                  0x0014ec                  ___udivdi3
+                  0x0016d4          0xe /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x0016d4                  ___udivdi3
  .libm.__umoddi3
-                  0x0014fa          0x8 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
-                  0x0014fa                  ___umoddi3
+                  0x0016e2          0x8 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x0016e2                  ___umoddi3
  .libm.__divdi3
-                  0x001502         0x6c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
-                  0x001502                  ___divdi3
+                  0x0016ea         0x6c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x0016ea                  ___divdi3
  .libm.__moddi3
-                  0x00156e         0x68 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
-                  0x00156e                  ___moddi3
+                  0x001756         0x68 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x001756                  ___moddi3
 
 usercode
  *(usercode)
@@ -756,15 +772,15 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x4d53
+.debug_info       0x000000       0x4db4
  *(.debug_info)
  .debug_info      0x000000        0xb40 build/default/production/PIC_serial.o
  .debug_info      0x000b40        0x46f build/default/production/PID.o
  .debug_info      0x000faf       0x225a build/default/production/functions.o
- .debug_info      0x003209        0xae0 build/default/production/main.o
- .debug_info      0x003ce9        0x7e3 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
- .debug_info      0x0044cc        0x7c6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
- .debug_info      0x004c92         0xc1 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
+ .debug_info      0x003209        0xb41 build/default/production/main.o
+ .debug_info      0x003d4a        0x7e3 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+ .debug_info      0x00452d        0x7c6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+ .debug_info      0x004cf3         0xc1 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x8be
@@ -777,24 +793,24 @@ __FUID3
  .debug_abbrev    0x000718        0x176 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
  .debug_abbrev    0x00088e         0x30 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
 
-.debug_line       0x000000       0x1b95
+.debug_line       0x000000       0x1c15
  *(.debug_line)
  .debug_line      0x000000        0x3bf build/default/production/PIC_serial.o
  .debug_line      0x0003bf        0x238 build/default/production/PID.o
- .debug_line      0x0005f7        0xdb5 build/default/production/functions.o
- .debug_line      0x0013ac        0x4ce build/default/production/main.o
- .debug_line      0x00187a        0x179 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
- .debug_line      0x0019f3        0x170 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
- .debug_line      0x001b63         0x32 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
+ .debug_line      0x0005f7        0xe35 build/default/production/functions.o
+ .debug_line      0x00142c        0x4ce build/default/production/main.o
+ .debug_line      0x0018fa        0x179 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+ .debug_line      0x001a73        0x170 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+ .debug_line      0x001be3         0x32 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
 
-.debug_frame      0x000000        0x77c
+.debug_frame      0x000000        0x7ab
  *(.debug_frame)
  .debug_frame     0x000000         0xc7 build/default/production/PIC_serial.o
  .debug_frame     0x0000c7         0x67 build/default/production/PID.o
- .debug_frame     0x00012e        0x3c1 build/default/production/functions.o
- .debug_frame     0x0004ef        0x23f build/default/production/main.o
- .debug_frame     0x00072e         0x27 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
- .debug_frame     0x000755         0x27 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+ .debug_frame     0x00012e        0x3f0 build/default/production/functions.o
+ .debug_frame     0x00051e        0x23f build/default/production/main.o
+ .debug_frame     0x00075d         0x27 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+ .debug_frame     0x000784         0x27 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
 
 .debug_str        0x000000         0xf9
  *(.debug_str)
@@ -812,7 +828,7 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x6e1
+                  0x000000        0x724
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000        0x191 build/default/production/PIC_serial.o
@@ -821,13 +837,13 @@ __FUID3
  .debug_pubnames
                   0x0001f4        0x2a6 build/default/production/functions.o
  .debug_pubnames
-                  0x00049a        0x1ef build/default/production/main.o
+                  0x00049a        0x232 build/default/production/main.o
  .debug_pubnames
-                  0x000689         0x1b /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+                  0x0006cc         0x1b /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
  .debug_pubnames
-                  0x0006a4         0x1c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+                  0x0006e7         0x1c /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
  .debug_pubnames
-                  0x0006c0         0x21 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
+                  0x000703         0x21 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
 
 .debug_ranges
  *(.debug_ranges)
@@ -859,16 +875,16 @@ __FUID3
                   0x000014          0x4 LONG 0x290 DEFINED (__INT0Interrupt)?ABSOLUTE (__INT0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000016          0x4 LONG 0x290 DEFINED (__IC1Interrupt)?ABSOLUTE (__IC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000018          0x4 LONG 0x290 DEFINED (__OC1Interrupt)?ABSOLUTE (__OC1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00001a          0x4 LONG 0x1964 DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00001a          0x4 LONG 0x1b42 DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00001c          0x4 LONG 0x290 DEFINED (__DMA0Interrupt)?ABSOLUTE (__DMA0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00001e          0x4 LONG 0x290 DEFINED (__IC2Interrupt)?ABSOLUTE (__IC2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000020          0x4 LONG 0x290 DEFINED (__OC2Interrupt)?ABSOLUTE (__OC2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000022          0x4 LONG 0x19a2 DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000022          0x4 LONG 0x1b80 DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000024          0x4 LONG 0x290 DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000026          0x4 LONG 0x290 DEFINED (__SPI1ErrInterrupt)?ABSOLUTE (__SPI1ErrInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000028          0x4 LONG 0x290 DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00002a          0x4 LONG 0x33c6 DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00002c          0x4 LONG 0x341a DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00002a          0x4 LONG 0x36bc DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00002c          0x4 LONG 0x3710 DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00002e          0x4 LONG 0x290 DEFINED (__ADC1Interrupt)?ABSOLUTE (__ADC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000030          0x4 LONG 0x290 DEFINED (__DMA1Interrupt)?ABSOLUTE (__DMA1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000032          0x4 LONG 0x290 DEFINED (__Interrupt15)?ABSOLUTE (__Interrupt15):ABSOLUTE (__DefaultInterrupt)
@@ -987,16 +1003,16 @@ __FUID3
                   0x000114          0x4 LONG 0x290 DEFINED (__AltINT0Interrupt)?ABSOLUTE (__AltINT0Interrupt):DEFINED (__INT0Interrupt)?ABSOLUTE (__INT0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000116          0x4 LONG 0x290 DEFINED (__AltIC1Interrupt)?ABSOLUTE (__AltIC1Interrupt):DEFINED (__IC1Interrupt)?ABSOLUTE (__IC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000118          0x4 LONG 0x290 DEFINED (__AltOC1Interrupt)?ABSOLUTE (__AltOC1Interrupt):DEFINED (__OC1Interrupt)?ABSOLUTE (__OC1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00011a          0x4 LONG 0x1964 DEFINED (__AltT1Interrupt)?ABSOLUTE (__AltT1Interrupt):DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00011a          0x4 LONG 0x1b42 DEFINED (__AltT1Interrupt)?ABSOLUTE (__AltT1Interrupt):DEFINED (__T1Interrupt)?ABSOLUTE (__T1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00011c          0x4 LONG 0x290 DEFINED (__AltDMA0Interrupt)?ABSOLUTE (__AltDMA0Interrupt):DEFINED (__DMA0Interrupt)?ABSOLUTE (__DMA0Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00011e          0x4 LONG 0x290 DEFINED (__AltIC2Interrupt)?ABSOLUTE (__AltIC2Interrupt):DEFINED (__IC2Interrupt)?ABSOLUTE (__IC2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000120          0x4 LONG 0x290 DEFINED (__AltOC2Interrupt)?ABSOLUTE (__AltOC2Interrupt):DEFINED (__OC2Interrupt)?ABSOLUTE (__OC2Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x000122          0x4 LONG 0x19a2 DEFINED (__AltT2Interrupt)?ABSOLUTE (__AltT2Interrupt):DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x000122          0x4 LONG 0x1b80 DEFINED (__AltT2Interrupt)?ABSOLUTE (__AltT2Interrupt):DEFINED (__T2Interrupt)?ABSOLUTE (__T2Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000124          0x4 LONG 0x290 DEFINED (__AltT3Interrupt)?ABSOLUTE (__AltT3Interrupt):DEFINED (__T3Interrupt)?ABSOLUTE (__T3Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000126          0x4 LONG 0x290 DEFINED (__AltSPI1ErrInterrupt)?ABSOLUTE (__AltSPI1ErrInterrupt):DEFINED (__SPI1ErrInterrupt)?ABSOLUTE (__SPI1ErrInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000128          0x4 LONG 0x290 DEFINED (__AltSPI1Interrupt)?ABSOLUTE (__AltSPI1Interrupt):DEFINED (__SPI1Interrupt)?ABSOLUTE (__SPI1Interrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00012a          0x4 LONG 0x33c6 DEFINED (__AltU1RXInterrupt)?ABSOLUTE (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
-                  0x00012c          0x4 LONG 0x341a DEFINED (__AltU1TXInterrupt)?ABSOLUTE (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00012a          0x4 LONG 0x36bc DEFINED (__AltU1RXInterrupt)?ABSOLUTE (__AltU1RXInterrupt):DEFINED (__U1RXInterrupt)?ABSOLUTE (__U1RXInterrupt):ABSOLUTE (__DefaultInterrupt)
+                  0x00012c          0x4 LONG 0x3710 DEFINED (__AltU1TXInterrupt)?ABSOLUTE (__AltU1TXInterrupt):DEFINED (__U1TXInterrupt)?ABSOLUTE (__U1TXInterrupt):ABSOLUTE (__DefaultInterrupt)
                   0x00012e          0x4 LONG 0x290 DEFINED (__AltADC1Interrupt)?ABSOLUTE (__AltADC1Interrupt):DEFINED (__ADC1Interrupt)?ABSOLUTE (__ADC1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000130          0x4 LONG 0x290 DEFINED (__AltDMA1Interrupt)?ABSOLUTE (__AltDMA1Interrupt):DEFINED (__DMA1Interrupt)?ABSOLUTE (__DMA1Interrupt):ABSOLUTE (__DefaultInterrupt)
                   0x000132          0x4 LONG 0x290 DEFINED (__AltInterrupt15)?ABSOLUTE (__AltInterrupt15):DEFINED (__Interrupt15)?ABSOLUTE (__Interrupt15):ABSOLUTE (__DefaultInterrupt)
@@ -1976,7 +1992,7 @@ LOAD heap
 LOAD data_init
 
 __c30_signature
-                  0x0000d0        0x114
+                  0x0000d0        0x11a
  __c30_signature
                   0x0000d0          0x6 build/default/production/PIC_serial.o
  __c30_signature
@@ -2028,47 +2044,49 @@ __c30_signature
  __c30_signature
                   0x000160          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(fcompare.eo)
  __c30_signature
-                  0x000166          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atoi.XXeo)
+                  0x000166          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atof.XXeo)
  __c30_signature
-                  0x00016c          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strlen.XXeo)
+                  0x00016c          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(atoi.XXeo)
  __c30_signature
-                  0x000172          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strncmp.XXeo)
+                  0x000172          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strlen.XXeo)
  __c30_signature
-                  0x000178          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sprintf_cdnopuxX.XXeo)
+                  0x000178          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(strncmp.XXeo)
  __c30_signature
-                  0x00017e          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
+                  0x00017e          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sprintf_cdnopuxX.XXeo)
  __c30_signature
-                  0x000184          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(snprintf_cdnopuxX.XXeo)
+                  0x000184          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
  __c30_signature
-                  0x00018a          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(vsnprintf_cdnopuxX.XXeo)
+                  0x00018a          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(snprintf_cdnopuxX.XXeo)
  __c30_signature
-                  0x000190          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sscanf_s.XXeo)
+                  0x000190          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(vsnprintf_cdnopuxX.XXeo)
  __c30_signature
-                  0x000196          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
+                  0x000196          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(sscanf_s.XXeo)
  __c30_signature
-                  0x00019c          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fgetc.XXelo)
+                  0x00019c          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
  __c30_signature
-                  0x0001a2          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fputc.XXelo)
+                  0x0001a2          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fgetc.XXelo)
  __c30_signature
-                  0x0001a8          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(ungetc.XXelo)
+                  0x0001a8          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fputc.XXelo)
  __c30_signature
-                  0x0001ae          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(filbuf.XXeo)
+                  0x0001ae          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(ungetc.XXelo)
  __c30_signature
-                  0x0001b4          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(flsbuf.XXeo)
+                  0x0001b4          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(filbuf.XXeo)
  __c30_signature
-                  0x0001ba          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(_iob.XXeo)
+                  0x0001ba          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(flsbuf.XXeo)
  __c30_signature
-                  0x0001c0          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fflush.XXeo)
+                  0x0001c0          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(_iob.XXeo)
  __c30_signature
-                  0x0001c6          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
+                  0x0001c6          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(fflush.XXeo)
  __c30_signature
-                  0x0001cc          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
+                  0x0001cc          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(read.eo)
  __c30_signature
-                  0x0001d2          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
+                  0x0001d2          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(write.eo)
  __c30_signature
-                  0x0001d8          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
+                  0x0001d8          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
  __c30_signature
-                  0x0001de          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
+                  0x0001de          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
+ __c30_signature
+                  0x0001e4          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(divmoddi3.eo)
 
 .nbss               0x0800       0x15aa
  .nbss              0x0800        0xd8e build/default/production/main.o
@@ -2097,8 +2115,8 @@ __c30_signature
  .nbss              0x19a2        0x408 build/default/production/functions.o
                     0x1baa                  _toPrint2
 
-.ndata              0x1daa        0x12e
- .ndata             0x1daa        0x12e build/default/production/main.o
+.ndata              0x1daa        0x136
+ .ndata             0x1daa        0x136 build/default/production/main.o
                     0x1daa                  _run_time
                     0x1dae                  _sample_time
                     0x1db0                  _wait_flag
@@ -2112,110 +2130,113 @@ __c30_signature
                     0x1dc0                  _post_period
                     0x1dc2                  _AD_period
                     0x1dc4                  _step_period
-                    0x1dc6                  _AD_clock
-                    0x1dca                  _blink_clock
-                    0x1dce                  _post_clock
-                    0x1dd2                  _postflag
-                    0x1dd4                  _use_simple_filter
-                    0x1dd6                  _printHeader
-                    0x1dd8                  _LED
-                    0x1dde                  _max_travel
-                    0x1de0                  _use_mm_pos
-                    0x1de2                  _butter3
-                    0x1ed4                  _step_clock
+                    0x1dc6                  _pos_control_period
+                    0x1dc8                  _AD_clock
+                    0x1dcc                  _blink_clock
+                    0x1dd0                  _post_clock
+                    0x1dd4                  _pos_control_clock
+                    0x1dd8                  _postflag
+                    0x1dda                  _use_simple_filter
+                    0x1ddc                  _printHeader
+                    0x1dde                  _LED
+                    0x1de4                  _max_travel
+                    0x1de6                  _use_mm_pos
+                    0x1de8                  _need_user_confirm
+                    0x1dea                  _butter3
+                    0x1edc                  _step_clock
 
-.nbss               0x1ed8          0x2
- .nbss              0x1ed8          0x2 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(errno.eo)
-                    0x1ed8                  _errno
+.nbss               0x1ee0          0x2
+ .nbss              0x1ee0          0x2 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libm-elf.a(errno.eo)
+                    0x1ee0                  _errno
 
-.data               0x1eda         0xa0
- .data              0x1eda         0xa0 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
+.data               0x1ee2         0xa0
+ .data              0x1ee2         0xa0 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
 
-.dconst             0x1f7a         0x2a
- .dconst            0x1f7a         0x2a /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
+.dconst             0x1f82         0x2a
+ .dconst            0x1f82         0x2a /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doprnt_cdnopuxX.XXeo)
 
-.data               0x1fa4         0x26
- .data              0x1fa4         0x26 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(_iob.XXeo)
-                    0x1fa4                  __Files
-                    0x1fa6                  __iob
+.data               0x1fac         0x26
+ .data              0x1fac         0x26 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(_iob.XXeo)
+                    0x1fac                  __Files
+                    0x1fae                  __iob
 
-.bss                0x1fca          0x8
- .bss               0x1fca          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(_iob.XXeo)
-                    0x1fca                  __sobuf
-                    0x1fcc                  __sibuf
-                    0x1fce                  __outdone
- .bss               0x1fd0          0x2 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
+.bss                0x1fd2          0x8
+ .bss               0x1fd2          0x6 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(_iob.XXeo)
+                    0x1fd2                  __sobuf
+                    0x1fd4                  __sibuf
+                    0x1fd6                  __outdone
+ .bss               0x1fd8          0x2 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libc-elf.a(doscan_s.XXeo)
 
-.data               0x1fd2          0x2
- .data              0x1fd2          0x2 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
-                    0x1fd2                  ___C30_UART
+.data               0x1fda          0x2
+ .data              0x1fda          0x2 /Applications/microchip/mplabc30/v3.30c/bin/bin/../../lib/libpic30-elf.a(c30_uart.eo)
+                    0x1fda                  ___C30_UART
 
-.heap               0x1fd4        0x400
- .heap              0x1fd4        0x400 heap
+.heap               0x1fdc        0x400
+ .heap              0x1fdc        0x400 heap
 
-.const              0x95d6        0x348 load address 0x0015d6  
- .const             0x95d6        0x27a build/default/production/functions.o
- .const             0x9850         0xce build/default/production/main.o
+.const              0x97be        0x33e load address 0x0017be  
+ .const             0x97be        0x2a0 build/default/production/functions.o
+ .const             0x9a5e         0x9e build/default/production/main.o
 
-.text             0x00191e       0x1c7c
- .text            0x00191e       0x107e build/default/production/functions.o
-                  0x00191e                  _init_clock
-                  0x001964                  __T1Interrupt
-                  0x0019a2                  __T2Interrupt
-                  0x0019aa                  _init_samptime
-                  0x0019c0                  _init_pins
-                  0x001a2e                  _btnDebounce
-                  0x001ab4                  _init_ADC
-                  0x001ace                  _init_encoders
-                  0x001b5c                  _read_ADC
-                  0x001b7c                  _readEncoder
-                  0x001c34                  _updateLEDs
-                  0x001c60                  _step
-                  0x001cb6                  _motor_enable
-                  0x001d08                  _filter
-                  0x001ebe                  _differentiate
-                  0x001f4e                  _integrate
-                  0x001f72                  _init_filter
-                  0x001f82                  _get_average
-                  0x001fde                  _calc_scale
-                  0x002042                  _calc_scale_dbl
-                  0x00208c                  _calc_offsets
-                  0x0020cc                  _calc_cold_offsets
-                  0x002200                  _calc_1kW_scaling
-                  0x002228                  _init_gradientData
-                  0x0022f0                  _set_target_pos
-                  0x00231a                  _inch_to_mm
-                  0x002344                  _mm_to_inch
-                  0x00236e                  _run_steppers
-                  0x002426                  _pause_toggle
-                  0x00246e                  _pollForSerial
-                  0x00248c                  _parseInputString
-                  0x0024b4                  _initPostData
-                  0x0024da                  _postHeadings
-                  0x002536                  _postUnits
-                  0x00258a                  _postRowData
-                  0x0025d8                  _doCommand
-                  0x002966                  _cmdUnknown
- .text            0x00299c        0x59c build/default/production/main.o
-                  0x00299c                  _main
- .text            0x002f38        0x426 build/default/production/PID.o
-                  0x002f38                  _PID_init
-                  0x002fa8                  _PID_setCoeffs
-                  0x0031d4                  _PID_run
-                  0x0032d2                  _PID_setReference
-                  0x003336                  _PID_clearOld
- .text            0x00335e        0x23c build/default/production/PIC_serial.o
-                  0x00335e                  _serial_begin
-                  0x0033c6                  __U1RXInterrupt
-                  0x00341a                  __U1TXInterrupt
-                  0x00346a                  _serial_ping
-                  0x003472                  _serialTest
-                  0x003484                  _serial_write
-                  0x0034e6                  _serial_bufWrite
-                  0x003528                  _serial_available
-                  0x003530                  _serial_remaining
-                  0x003538                  _serial_read
-                  0x003592                  _serial_gotNewline
+.text             0x001afc       0x1d94
+ .text            0x001afc       0x118e build/default/production/functions.o
+                  0x001afc                  _init_clock
+                  0x001b42                  __T1Interrupt
+                  0x001b80                  __T2Interrupt
+                  0x001b88                  _init_samptime
+                  0x001b9e                  _init_pins
+                  0x001c0c                  _btnDebounce
+                  0x001c92                  _init_ADC
+                  0x001cac                  _init_encoders
+                  0x001d3a                  _read_ADC
+                  0x001d5a                  _readEncoder
+                  0x001e12                  _updateLEDs
+                  0x001e3e                  _step
+                  0x001e94                  _motor_enable
+                  0x001ee6                  _filter
+                  0x00209c                  _differentiate
+                  0x00212c                  _integrate
+                  0x002150                  _init_filter
+                  0x002160                  _get_average
+                  0x0021bc                  _calc_scale
+                  0x002220                  _calc_scale_dbl
+                  0x00226a                  _calc_offsets
+                  0x0022aa                  _calc_cold_offsets
+                  0x0023de                  _calc_1kW_scaling
+                  0x002406                  _init_gradientData
+                  0x0024ce                  _set_target_pos
+                  0x0024f8                  _inch_to_mm
+                  0x002522                  _mm_to_inch
+                  0x00254c                  _run_steppers
+                  0x002604                  _pause_toggle
+                  0x00264c                  _pollForSerial
+                  0x00266a                  _parseInputString
+                  0x002692                  _initPostData
+                  0x0026b8                  _postHeadings
+                  0x002714                  _postUnits
+                  0x002768                  _postRowData
+                  0x0027b6                  _doCommand
+                  0x002c54                  _cmdUnknown
+ .text            0x002c8a        0x5a4 build/default/production/main.o
+                  0x002c8a                  _main
+ .text            0x00322e        0x426 build/default/production/PID.o
+                  0x00322e                  _PID_init
+                  0x00329e                  _PID_setCoeffs
+                  0x0034ca                  _PID_run
+                  0x0035c8                  _PID_setReference
+                  0x00362c                  _PID_clearOld
+ .text            0x003654        0x23c build/default/production/PIC_serial.o
+                  0x003654                  _serial_begin
+                  0x0036bc                  __U1RXInterrupt
+                  0x003710                  __U1TXInterrupt
+                  0x003760                  _serial_ping
+                  0x003768                  _serialTest
+                  0x00377a                  _serial_write
+                  0x0037dc                  _serial_bufWrite
+                  0x00381e                  _serial_available
+                  0x003826                  _serial_remaining
+                  0x00382e                  _serial_read
+                  0x003888                  _serial_gotNewline
 
-.dinit            0x00359a        0x1b2
- .dinit           0x00359a        0x1b2 data_init
+.dinit            0x003890        0x1b8
+ .dinit           0x003890        0x1b8 data_init
