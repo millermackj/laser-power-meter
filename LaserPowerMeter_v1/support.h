@@ -25,10 +25,10 @@ Comments:  Support file for definitions and function prototypes
 
 
 // set the follow to zero if the device is uncalibrated
-#define QUADA_1KW  2000        // quadrant A raw counts at 1kW centered
-#define QUADB_1KW  2000        // quadrant B raw counts at 1kW centered
-#define QUADC_1KW  2000        // quadrant C raw counts at 1kW centered
-#define QUADD_1KW  2000        // quadrant D raw counts at 1kW centered
+#define QUADA_1KW  0        // quadrant A raw counts at 1kW centered
+#define QUADB_1KW  0        // quadrant B raw counts at 1kW centered
+#define QUADC_1KW  0        // quadrant C raw counts at 1kW centered
+#define QUADD_1KW  0        // quadrant D raw counts at 1kW centered
 
 #define WAIT i=0;while(i<15)i++;
 
@@ -83,7 +83,7 @@ Comments:  Support file for definitions and function prototypes
 
 #define COLUMN_LABEL_SIZE 16 // max letters of each output column heading
 #define ROW_LENGTH 128       // number of letters in an entire row
-#define NUM_COLUMNS 13        // number of output columns
+#define NUM_COLUMNS 14        // number of output columns
 
 #define BUFFER_SIZE 512     // software serial data buffer size
 
