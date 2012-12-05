@@ -32,10 +32,12 @@ extern int post_period;
 extern int blink_period;
 extern int max_travel;
 extern gradient_data_struct quadrant[];
-extern int use_simple_filter; // flag to use EWMA instead of butterworth
+extern int use_simple_filter; // flag to use EWMA instead of butterworth filter
 extern int inch_to_mm_scale;
 extern int mm_to_inch_scale;
 extern int need_user_confirm;
+
+extern int half_clock; // 500 usec timer
 
 // Initialize of Clock Frequency
 
@@ -69,10 +71,44 @@ void init_clock(void) {
 // Used to enforce Sample Time
 
 void _ISRFASTER _T1Interrupt(void) {
+
+  half_clock = !half_clock; // increment 500 usec timer
+  if (half_clock) {
+    
+    // pulse the the stepper motors up
+    if(motorX.enabled && motorX.step_bin){
+      MOTX_STEP_BIT = 1;
+    }
+    else
+      motorX.enabled = 0;
+    if(motorY.enabled && motorY.step_bin){
+      MOTY_STEP_BIT = 1;
+    }
+    else
+      motorY.enabled = 0;
+
+  }
+  else{
+    // pulse the the stepper motors down
+    if(motorX.enabled && motorX.step_bin){
+      MOTX_STEP_BIT = 0;
+      motorX.step_bin--;
+    }
+    else
+      motorX.enabled = 0;
+    if(motorY.enabled && motorY.step_bin){
+      MOTY_STEP_BIT = 0;
+      motorY.step_bin--;
+    }
+    else
+      motorY.enabled = 0;
+
     run_time++; // increment millisecond timer
-    if(run_time % sample_time == 0)
+
+    if (run_time % sample_time == 0)
       wait_flag = 1; // Signal end of sample time
-    IFS0bits.T1IF = 0;
+  }
+  IFS0bits.T1IF = 0;
 } // end T1Interupt
 
 // Timer2 iterrupt service routine
@@ -95,7 +131,9 @@ void _ISRFASTER _T2Interrupt(void) {
 
 void init_samptime(void) {
     TMR1 = 0;
-    PR1 = 4952 - 1; // Set the period register - 1 msec
+//    PR1 = 4952 - 1; // Set the period register - 1 msec
+    PR1 = 2476 - 1; // Set the period register - 500 usec
+
     T1CON = 0x8010; // TMR1 on, prescalar set to 1:8 Tclk/2
     _T1IF = 0; // Clear Flag
     _T1IE = 1; // Enable Source
@@ -329,10 +367,12 @@ void step(motor_struct* motor, int direction){
 
 // enable or disable stepper motor
 void motor_enable(motor_struct* motor, int enable){
-  unsigned int tempLATCH = *(motor->LATCH) & ~(motor->ENABLE_PIN);
-  *(motor->LATCH) = tempLATCH | (motor->ENABLE_PIN*!enable);
-  int i;
-  for(i = 0; i < 10; i++); // wait for pulse to be raised
+  if(motor->enabled != enable){
+    unsigned int tempLATCH = *(motor->LATCH) & ~(motor->ENABLE_PIN);
+    *(motor->LATCH) = tempLATCH | (motor->ENABLE_PIN*!enable);
+  }
+  motor->enabled = enable; // set enabled status of motor
+
 }
 
 // run the default filter on the data
@@ -525,20 +565,31 @@ void init_gradientData(gradient_data_struct* gradData, digital_filter* filter){
 }
 
 void set_target_pos(motor_struct* motor, long int pos){
+  long int new_pos = pos;
   if(use_mm_pos){
-    motor->target_pos = mm_to_inch(pos);
+    new_pos = mm_to_inch(pos);
   }
-  else{
-    motor->target_pos = pos;
+
+  if(abs(new_pos) <= (long int)max_travel){
+    motor_enable(motor, 1); // enable the motor
+    motor->target_pos = new_pos;
   }
+
+    motor->step_bin = abs(motor->target_pos - motor->native_pos);
+
+    if (motor->target_pos > motor->native_pos)
+      motor->direction = 1;
+    else
+      motor->direction = 0;
 }
 
+
 long int inch_to_mm(long int inches){
-  return (inches*inch_to_mm_scale) >> 10;
+  return (inches*inch_to_mm_scale) >> 13;
 }
 
 long int mm_to_inch(long int mm){
-  return (mm*mm_to_inch_scale) >> 10;
+  return (mm*mm_to_inch_scale) >> 13;
 }
 
 // check limits of motor targets and step towards targets
@@ -548,10 +599,13 @@ void run_steppers() {
   for (i = 0; i < 2; i++) { // run once for each motor
     // give a pulse to the stepper driver if it's time
     if (motor_pointer->target_pos == motor_pointer->native_pos
-            || abs(motor_pointer->target_pos) > max_travel)
-      motor_enable(motor_pointer, 0); // disable motor
+            || abs(motor_pointer->target_pos) > max_travel){
+      if (motor_pointer->enabled)
+        motor_enable(motor_pointer, 0); // disable motor
+    }
     else {
-      motor_enable(motor_pointer, 1); // enable motor
+      if(!motor_pointer->enabled)
+        motor_enable(motor_pointer, 1); // enable motor
       // check if we need a positive step
       if (motor_pointer->target_pos > motor_pointer->native_pos) {
         step(motor_pointer, 1);
@@ -703,18 +757,25 @@ void doCommand(command_struct* command) {
       serial_bufWrite("</m>\n", -1);
 
     } else if (!strncmp(command->arg1, "x", 1)) {
-      if(use_mm_pos)
-        motorX.target_pos = mm_to_inch((long int)(atof(command->arg2)*10));
+      if(use_mm_pos){
+        set_target_pos(&motorX, (long int) (atof(command->arg2)*100.0));
+        //motorX.target_pos = mm_to_inch((long int)(atof(command->arg2)*100));
+        sprintf(toPrint2, "<m>step bin: %d</m>\n", motorX.step_bin);
+        serial_bufWrite(toPrint2, -1);
+      }
       else
-        motorX.target_pos = atoi(command->arg2);
+        set_target_pos(&motorX, (long int) (atoi(command->arg2)));
+        //motorX.target_pos = atoi(command->arg2);
     } else if (!strncmp(command->arg1, "y", 1)) {
-      if(use_mm_pos)
-        motorY.target_pos = mm_to_inch((long int)(atof(command->arg2)*10));
+      if (use_mm_pos)
+        set_target_pos(&motorY, (long int) (atof(command->arg2)*100.0));
+        //motorY.target_pos = mm_to_inch((long int)(atof(command->arg2)*100));
       else
-        motorY.target_pos = atoi(command->arg2);
+        set_target_pos(&motorY, (long int) (atoi(command->arg2)));
+        //motorY.target_pos = atoi(command->arg2);
     } else if(!strncmp(command->arg1, "temp", 1)) {
       quadrant[TEMP_CHANNEL].offset = get_average(&(quadrant[TEMP_CHANNEL])) 
-              - (long int)(atof(command->arg2)*10
+              - (long int)(atof(command->arg2)*10.0
               /quadrant[TEMP_CHANNEL].dbl_scale);
       sprintf(toPrint2, "<m>temp channel offset: %ld</m>\n", quadrant[TEMP_CHANNEL].offset);
       serial_bufWrite(toPrint2, -1);
@@ -741,29 +802,37 @@ void doCommand(command_struct* command) {
       postflag = 1;
     }
   } else if (!strncmp(command->arg0, "xp", 2)) { // step commands
-    if (use_mm_pos)
-      
-      motorX.target_pos += mm_to_inch((long int) (atof(command->arg1)*10));
-    else
-      motorX.target_pos += atoi(command->arg1);
+      if(use_mm_pos)
+        set_target_pos(&motorX, motorX.target_pos + (long int)(atof(command->arg2)*100.0));
+//        motorX.target_pos += mm_to_inch((long int)(atof(command->arg1)*10));
+      else
+        set_target_pos(&motorX, motorX.target_pos +(long int) (atoi(command->arg2)));
+//        motorX.target_pos += atoi(command->arg1);
 
   } else if (!strncmp(command->arg0, "xm", 2)) { // step commands
 
-     if(use_mm_pos)
-        motorX.target_pos -= mm_to_inch((long int)(atof(command->arg1)*10));
+      if(use_mm_pos)
+        set_target_pos(&motorX, motorX.target_pos - (long int)(atof(command->arg2)*100.0));
+//        motorX.target_pos -= mm_to_inch((long int)(atof(command->arg1)*10));
       else
-        motorX.target_pos -= atoi(command->arg1);
+        set_target_pos(&motorX, motorX.target_pos - (long int) (atoi(command->arg2)));
+//        motorX.target_pos -= atoi(command->arg1);
 
   } else if (!strncmp(command->arg0, "yp", 2)) { // step commands
-    if (use_mm_pos)
-      motorY.target_pos += mm_to_inch((long int) (atof(command->arg1)*10));
-    else
-      motorY.target_pos += atoi(command->arg1);
-  } else if (!strncmp(command->arg0, "ym", 2)) { // step commands
-     if(use_mm_pos)
-        motorY.target_pos -= mm_to_inch((long int)(atof(command->arg1)*10));
+      if(use_mm_pos)
+        set_target_pos(&motorY, motorY.target_pos + (long int)(atof(command->arg2)*100.0));
+        //motorY.target_pos = mm_to_inch((long int)(atof(command->arg2)*100));
       else
-        motorY.target_pos -= atoi(command->arg1);
+        set_target_pos(&motorY, motorY.target_pos +(long int) (atoi(command->arg2)));
+        //motorX.target_pos = atoi(command->arg2);
+
+  } else if (!strncmp(command->arg0, "ym", 2)) { // step commands
+      if(use_mm_pos)
+        set_target_pos(&motorY, motorY.target_pos - (long int)(atof(command->arg2)*100.0));
+//        motorY.target_pos -= mm_to_inch((long int)(atof(command->arg1)*10));
+      else
+        set_target_pos(&motorY, motorY.target_pos - (long int) (atoi(command->arg2)));
+//        motorY.target_pos -= atoi(command->arg1);
   } else if (!strncmp(command->arg0, "deriv", 2)) { // get derivatives of signals
   sprintf(toPrint2, "<m>derivatives: time = %ld\na: %ld\nb: %ld\nc: %ld\nd: %ld</m>\n",
           run_time,

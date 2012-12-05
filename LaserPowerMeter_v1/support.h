@@ -15,7 +15,7 @@ Comments:  Support file for definitions and function prototypes
 #define SAMP_PERIOD 2         // main loop time in millisec
 
 #define BAUDRATE 115200     // baud rate for UART serial comm 115200 is good
-#define AD_PERIOD 6         // time between a/d samples
+#define AD_PERIOD 25         // time between a/d samples
 #define CALIB_TIME 1000      // time to collect calibration data
 
 //#define RTD_100 2464L      // RTD raw counts at 100 degrees Celsius
@@ -23,6 +23,8 @@ Comments:  Support file for definitions and function prototypes
 #define RTD_100 2605L      // RTD raw counts at 100 degrees Celsius
 #define RTD_0   954L       // RTD raw counts at 0 degrees Celsius
 
+
+#define DERIV_THRESHOLD 
 
 // set the follow to zero if the device is uncalibrated
 #define QUADA_1KW  0        // quadrant A raw counts at 1kW centered
@@ -75,11 +77,16 @@ Comments:  Support file for definitions and function prototypes
 #define MOTX_DIR 1 << 15      // x axis motor direction pin RB15
 #define MOTX_STEP 1 << 14      // x axis motor step pin RB14
 #define MOTX_EN 1 << 13
+#define MOTX_STEP_BIT LATBbits.LATB14
+#define MOTX_DIR_BIT LATBbits.LATB15
 
 #define MOTY_LATCH LATB
 #define MOTY_DIR 1 << 12      // y axis motor direction pin RB12
 #define MOTY_STEP 1 << 11      // y axis motor step pin RB11
 #define MOTY_EN 1 << 10
+
+#define MOTY_STEP_BIT LATBbits.LATB11
+#define MOTY_DIR_BIT LATBbits.LATB12
 
 #define COLUMN_LABEL_SIZE 16 // max letters of each output column heading
 #define ROW_LENGTH 128       // number of letters in an entire row
@@ -134,6 +141,9 @@ typedef struct{ // for stepper motor with driver
   int DIR_PIN;
   int STEP_PIN;
   int ENABLE_PIN;
+  int enabled;
+  int direction;
+  int step_bin;
   long int target_pos;
   long int native_pos;
   long int alt_pos;
@@ -180,6 +190,7 @@ typedef struct {
   long int average; // average of past values
   double dbl_scale; // floating pont scaling factor
   long int cts_at_1kW; // raw counts readout at 1kW centered power
+  int deriv_state; // derivative state: steady_cold, rising, steady_hot, falling
 }gradient_data_struct;
 
 
