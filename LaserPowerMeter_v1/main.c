@@ -24,7 +24,6 @@ functions.c, support.h
 #define POST_PERIOD 41 // ms between serial data postings
 #define STEP_PERIOD 3   // ms between stepper motor pulses
 
-
 long unsigned int run_time = 0; // 1 ms increments, resets at 49.7 days
 int sample_time = SAMP_PERIOD;
 int wait_flag = 0; // signal for end of sample time
@@ -38,36 +37,27 @@ int blink_period = BLINK_PERIOD;
 int post_period = POST_PERIOD; // ms between each post (minus 16 for an unknown reason)
 int AD_period = AD_PERIOD; // ms between data collection
 int step_period = STEP_PERIOD;
-<<<<<<< HEAD
-<<<<<<< HEAD
-int deriv_period = 500; // ms between determining derivative of signals
+int deriv_period = 1000;
 long unsigned int deriv_clock = 0;
-=======
->>>>>>> parent of d68d1d0... used for second field test
-=======
->>>>>>> parent of d68d1d0... used for second field test
 int pos_control_period = 1000; // ms between determining a new position target
 long unsigned int AD_clock = 0;
 long unsigned int blink_clock = 0; // ms blink rate
 long unsigned int post_clock = 0; // next time to post serial data
 long unsigned int pos_control_clock = 0;
-
+long int total_power = 0;
 int postflag = 1; // set if we want to post row data to serial
 int use_simple_filter = 1; // set to zero for butterworth digital filter
 int printHeader = 1; // flag to print header next post or not
 char toprint[BUFFER_SIZE];
-
+command_struct deriv_command = {.arg0 = "deriv"};
 int AD_channel; // index to read from a different A/D channel each loop
-
-int half_clock = 0; // 500 usec timer
-
 
 // initialize structure holding LED pin and state info
 LED_struct LED = {&LED_LATCH, &LED_OFF, &LED_OFF};
 
 motor_struct motorX, motorY; // structs for motor pwm and encoder data
-
-command_struct command; // struct to hold incoming command data
+command_struct command;
+command_struct *command_ptr; // struct to hold incoming command data
 post_data data; // row of data for serial posting
 
 // stepper maximum travel +/-
@@ -144,27 +134,13 @@ int main() {
 
   // for posting data to serial port
   serial_begin(BAUDRATE); // initiatize serial connection at 115000 baud
-<<<<<<< HEAD
-<<<<<<< HEAD
-  char * headings[] = {"Time", "X-Step", "Y-Step", "East_filt", "North_filt", "West_filt",
-    "South_filt", "Total Power", "Temp","East", "North", "West", "South", "Temp"};
-  char* units[] = {"seconds", "in", "in","cts","cts", "cts", "cts",
-  "Watts", "Deg C","cts", "cts", "cts", "cts", "cts"};
-=======
-=======
->>>>>>> parent of d68d1d0... used for second field test
   char * headings[] = {"Time", "X-Step", "Y-Step", "East", "North", "West",
-    "South", "Temp"
-          ,"East", "North", "West", "South", "Temp"};
-  char* units[] = {"seconds", "in", "in", "cts", "cts", "cts", "cts", "cts"
-          ,"Watts", "Watts", "Watts", "Watts", "Deg C"};
-<<<<<<< HEAD
->>>>>>> parent of d68d1d0... used for second field test
-=======
->>>>>>> parent of d68d1d0... used for second field test
+    "South", "Total Power", "Temp","East", "North", "West", "South", "Temp"};
+  char* units[] = {"seconds", "in", "in","Watts","Watts", "Watts", "Watts",
+  "Watts", "Deg C","cts", "cts", "cts", "cts", "cts"};
 
-  inch_to_mm_scale = (long int)((1.0/254.0)*powf(2,13));
-  mm_to_inch_scale = (long int)(254.0*powf(2,13))+1;
+  inch_to_mm_scale = (long int)((1.0/25.4)*powf(2,10));
+  mm_to_inch_scale = (long int)(25.4*powf(2,10))+1;
 
   if(use_mm_pos){
     units[1] = "mm";
@@ -244,14 +220,12 @@ int main() {
         AD_clock = run_time + AD_period;
       } else {
         AD_channel++;
-        AD_clock = run_time + 4; // wait 4 ms to sample next channel
+        AD_clock = run_time + 1; // wait 2 ms to sample next channel
       }
     }
 
 
     if (wait_flag) { // wait for the next sample period to begin
-<<<<<<< HEAD
-<<<<<<< HEAD
       if(AD_clock <= run_time){
         // sum up total power
         total_power = 0;
@@ -261,29 +235,20 @@ int main() {
       }
 
       if (deriv_clock <= run_time){
-        long int deriv;
-        for(i = 0; i < 4; i++){
-          deriv = differentiate(&(quadrant[i]));
-
-        }
-        //command_ptr = &deriv_command;
-        //doCommand(command_ptr);
+        command_ptr = &deriv_command;
+        doCommand(command_ptr);
         deriv_clock = run_time + deriv_period;
       }
-=======
->>>>>>> parent of d68d1d0... used for second field test
-=======
->>>>>>> parent of d68d1d0... used for second field test
 
       // determine button state
       switch (btnDebounce()) {
         case BTN_LONG: // enter reset mode if long press has been detected
-          //sys_state = SYS_RESET;
+          sys_state = SYS_RESET;
           if (!pause_all)
-            //pause_toggle(&pause_all);
+            pause_toggle(&pause_all);
           break;
         case BTN_SHORT: // toggle pause_all flag
-          //pause_toggle(&pause_all);
+          pause_toggle(&pause_all);
           break;
         default:
           break;
@@ -292,23 +257,11 @@ int main() {
       // gather position data from motor encoders
       //readEncoder(&(motorX.enc));
       //readEncoder(&(motorY.enc));
-      if(motorX.direction == 1)
-        motorX.native_pos = motorX.target_pos - motorX.step_bin;
-      else if(motorX.direction == 0)
-        motorX.native_pos = motorX.target_pos + motorX.step_bin;
-      if(motorY.direction == 1)
-        motorY.native_pos = motorY.target_pos - motorY.step_bin;
-      else if(motorY.direction == 0)
-        motorY.native_pos = motorY.target_pos + motorY.step_bin;
 
-      motorX.alt_pos = mm_to_inch(motorX.native_pos);
-      motorY.alt_pos = mm_to_inch(motorY.native_pos);
-
-
-//      if (step_clock <= run_time) {
-//        run_steppers(); // run stepper motors if necessary
-//        step_clock = run_time + step_period;
-//      }
+      if (step_clock <= run_time) {
+        run_steppers(); // run stepper motors if necessary
+        step_clock = run_time + step_period;
+      }
 
       // only proceed if the system is not paused
       if (!pause_all) {
@@ -337,10 +290,8 @@ int main() {
       //  post the current row of data to the serial port
       if (postflag && post_clock <= run_time) {
         snprintf(data.dataRow[0], 9, "%lu.%03lu", run_time / 1000, run_time % 1000); // run time seconds
-<<<<<<< HEAD
-<<<<<<< HEAD
-        snprintf(data.dataRow[1], 9, "%ld.%1d", *(motorX.display_pos) / 100, abs(*(motorX.display_pos) % 100));
-        snprintf(data.dataRow[2], 9, "%ld.%1d", *(motorY.display_pos) / 100, abs(*(motorY.display_pos) % 100));
+        snprintf(data.dataRow[1], 9, "%ld.%1d", *(motorX.display_pos) / 10, abs(*(motorX.display_pos) % 10));
+        snprintf(data.dataRow[2], 9, "%ld.%1d", *(motorY.display_pos) / 10, abs(*(motorY.display_pos) % 10));
         snprintf(data.dataRow[3], 9, "%ld", quadrant[THERM1_CHANNEL].filtered_value);
         snprintf(data.dataRow[4], 9, "%ld", quadrant[THERM2_CHANNEL].filtered_value);
         snprintf(data.dataRow[5], 9, "%ld", quadrant[THERM3_CHANNEL].filtered_value);
@@ -352,25 +303,6 @@ int main() {
         snprintf(data.dataRow[11], 9, "%ld", quadrant[THERM3_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[12], 9, "%ld", quadrant[THERM4_CHANNEL].unfiltered_value);
         snprintf(data.dataRow[13], 9, "%ld", quadrant[TEMP_CHANNEL].unfiltered_value);
-=======
-=======
->>>>>>> parent of d68d1d0... used for second field test
-        snprintf(data.dataRow[1], 9, "%ld.%1d", *(motorX.display_pos) / 10, abs(*(motorX.display_pos) % 10));
-        snprintf(data.dataRow[2], 9, "%ld.%1d", *(motorY.display_pos) / 10, abs(*(motorY.display_pos) % 10));
-        snprintf(data.dataRow[3], 9, "%ld", quadrant[THERM1_CHANNEL].unfiltered_value);
-        snprintf(data.dataRow[4], 9, "%ld", quadrant[THERM2_CHANNEL].unfiltered_value);
-        snprintf(data.dataRow[5], 9, "%ld", quadrant[THERM3_CHANNEL].unfiltered_value);
-        snprintf(data.dataRow[6], 9, "%ld", quadrant[THERM4_CHANNEL].unfiltered_value);
-        snprintf(data.dataRow[7], 9, "%ld", quadrant[TEMP_CHANNEL].unfiltered_value);
-        snprintf(data.dataRow[8], 9, "%ld", quadrant[THERM1_CHANNEL].filtered_value);
-        snprintf(data.dataRow[9], 9, "%ld", quadrant[THERM2_CHANNEL].filtered_value);
-        snprintf(data.dataRow[10], 9, "%ld", quadrant[THERM3_CHANNEL].filtered_value);
-        snprintf(data.dataRow[11], 9, "%ld", quadrant[THERM4_CHANNEL].filtered_value);
-        snprintf(data.dataRow[12], 9, "%ld.%d", quadrant[TEMP_CHANNEL].filtered_value/10, abs(quadrant[TEMP_CHANNEL].filtered_value%10));
-<<<<<<< HEAD
->>>>>>> parent of d68d1d0... used for second field test
-=======
->>>>>>> parent of d68d1d0... used for second field test
 
         postRowData(&data);
         post_clock = run_time + post_period; // reset posting clock
